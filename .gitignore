@@ -1,0 +1,48 @@
+# Local data, videos, and processing output
+data/
+*.mp4
+*.m4a
+*.webm
+*.mkv
+*.aiff
+*.wav
+*.mp3
+*.zip
+
+# Python & Virtual Environments
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# Secrets & Environment variables
+.env
+.env.*
+*.key
+*.pem
+*.token
+
+# OS & Editor files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.impeccable/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test & coverage caches
+.pytest_cache/
+.coverage
+htmlcov/
