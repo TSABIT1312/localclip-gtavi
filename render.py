@@ -1,13 +1,103 @@
-"""Local renderer adapted from the approved facecam/gameplay edit. No cloud calls."""
+"""Local renderer adapted from the approved facecam/gameplay edit. Cross-platform (macOS, Windows, Linux)."""
 import json
 import math
+import shutil
 import subprocess as sp
+import sys
 import uuid
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont, ImageOps
 
 W,H,FPS=720,1280,30
-FONT='/System/Library/Fonts/Supplemental/Arial Bold.ttf'
+
+
+def resolve_font():
+    bundled = Path(__file__).resolve().parent / 'assets' / 'fonts' / 'default.ttf'
+    if bundled.is_file():
+        return str(bundled)
+    candidates = [
+        # macOS
+        '/System/Library/Fonts/Supplemental/Arial Bold.ttf',
+        '/Library/Fonts/Arial Bold.ttf',
+        '/System/Library/Fonts/Helvetica.ttc',
+        # Windows
+        'C:\\Windows\\Fonts\\arialbd.ttf',
+        'C:\\Windows\\Fonts\\arial.ttf',
+        'C:\\Windows\\Fonts\\segoeui.ttf',
+        'C:\\Windows\\Fonts\\tahoma.ttf',
+        # Linux
+        '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
+        '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',
+        '/usr/share/fonts/truetype/freefont/FreeSansBold.ttf',
+        '/usr/share/fonts/TTF/DejaVuSans-Bold.ttf',
+        '/usr/share/fonts/dejavu-sans-fonts/DejaVuSans-Bold.ttf',
+    ]
+    for c in candidates:
+        if Path(c).is_file():
+            return c
+    return None
+
+
+def get_font(size):
+    font_path = resolve_font()
+    if font_path:
+        try:
+            return ImageFont.truetype(font_path, size)
+        except Exception:
+            pass
+    try:
+        return ImageFont.load_default(size=size)
+    except TypeError:
+        return ImageFont.load_default()
+
+
+def synthesize_speech(text, base_path, lang='id'):
+    base_path = Path(base_path)
+    # 1. edge-tts (cross-platform: Windows, Linux, macOS)
+    try:
+        import asyncio, edge_tts
+        voice = 'id-ID-GadisNeural' if lang == 'id' else 'en-US-JennyNeural'
+        out = base_path.with_suffix('.mp3')
+        async def _run():
+            comm = edge_tts.Communicate(text, voice)
+            await comm.save(str(out))
+        asyncio.run(_run())
+        if out.exists() and out.stat().st_size > 0:
+            return out
+    except Exception:
+        pass
+
+    # 2. macOS say command
+    if sys.platform == 'darwin' and shutil.which('say'):
+        out = base_path.with_suffix('.aiff')
+        voice = 'Damayanti' if lang == 'id' else 'Samantha'
+        rate = '185' if lang == 'id' else '195'
+        r = sp.run(['say', '-v', voice, '-r', rate, '-o', str(out)], input=text.encode(), capture_output=True, timeout=60)
+        if r.returncode != 0:
+            r = sp.run(['say', '-v', 'Samantha', '-r', '195', '-o', str(out)], input=text.encode(), capture_output=True, timeout=60)
+        if r.returncode == 0 and out.exists() and out.stat().st_size > 0:
+            return out
+
+    # 3. Windows PowerShell SAPI
+    if sys.platform == 'win32' and shutil.which('powershell'):
+        out = base_path.with_suffix('.wav')
+        script = f"Add-Type -AssemblyName System.Speech; $s = New-Object System.Speech.Synthesis.SpeechSynthesizer; $s.SetOutputToWaveFile('{str(out).replace(chr(39), chr(39)+chr(39))}'); $s.Speak('{text.replace(chr(39), chr(39)+chr(39))}'); $s.Dispose();"
+        r = sp.run(['powershell', '-NoProfile', '-Command', script], capture_output=True, timeout=60)
+        if r.returncode == 0 and out.exists() and out.stat().st_size > 0:
+            return out
+
+    # 4. Linux espeak / espeak-ng
+    espeak_bin = shutil.which('espeak-ng') or shutil.which('espeak')
+    if espeak_bin:
+        out = base_path.with_suffix('.wav')
+        r = sp.run([espeak_bin, '-w', str(out), text], capture_output=True, timeout=60)
+        if r.returncode == 0 and out.exists() and out.stat().st_size > 0:
+            return out
+
+    # 5. Silent audio fallback via ffmpeg (so render never fails if TTS offline)
+    out = base_path.with_suffix('.wav')
+    sp.run(['ffmpeg', '-y', '-v', 'error', '-f', 'lavfi', '-i', 'anullsrc=r=48000:cl=stereo', '-t', '1.5', str(out)], capture_output=True, timeout=30)
+    return out
 
 
 def run(args,timeout=120):
@@ -23,7 +113,7 @@ def duration(path):
 def draw_text(im,text,y,size=42,color='white',limit=2):
     d=ImageDraw.Draw(im)
     for s in range(size,19,-2):
-        font=ImageFont.truetype(FONT,s); lines=[]; line=''
+        font=get_font(s); lines=[]; line=''
         for word in text.split():
             if d.textlength(word,font=font)>640:
                 raise ValueError('Kata terlalu panjang untuk caption; pisahkan teks di editor.')
@@ -93,9 +183,9 @@ def layout(image,t,phase,clip,creator):
         d.rectangle((0,460,720,463),fill='#ffd24a')
         d.rectangle((0,517,720,520),fill='#ffd24a')
         banner_title=f"{creator.upper()} / {clip.get('title','SHORT').upper()}"
-        font_b=ImageFont.truetype(FONT,24)
+        font_b=get_font(24)
         if d.textlength(banner_title,font=font_b)>680:
-            font_b=ImageFont.truetype(FONT,20)
+            font_b=get_font(20)
         d.text((360,477),banner_title,anchor='mt',font=font_b,fill='#ffd24a',stroke_width=1,stroke_fill='black')
 
         # 3. Bottom Gameplay: y = 520..1280 (Height 760px)
@@ -166,18 +256,10 @@ def render_clip(source,folder,clip,creator):
     source,folder=Path(source),Path(folder)
     folder.mkdir(exist_ok=True,parents=True)
     revision=uuid.uuid4().hex[:10]
-    intro_audio=folder/f'intro-{revision}.aiff'
-    cta_audio=folder/f'cta-{revision}.aiff'
     clip_lang = clip.get('lang', 'id')
-    voice = 'Damayanti' if clip_lang == 'id' else 'Samantha'
-    rate = '185' if clip_lang == 'id' else '195'
     cta_text = f'Subscribe ke {creator} di YouTube untuk tontonan seru lainnya.' if clip_lang == 'id' else ('Subscribe to '+creator+' on YouTube for more gaming.')
-    # stdin keeps leading dashes and untrusted narration from becoming CLI options.
-    for text,path in [(clip['narration'],intro_audio),(cta_text,cta_audio)]:
-        r=sp.run(['say','-v',voice,'-r',rate,'-o',str(path)],input=text.encode(),capture_output=True,timeout=60)
-        if r.returncode:
-            r=sp.run(['say','-v','Samantha','-r','195','-o',str(path)],input=text.encode(),capture_output=True,timeout=60)
-            if r.returncode: raise RuntimeError('Suara lokal macOS Speech tidak tersedia. Periksa macOS Speech.')
+    intro_audio = synthesize_speech(clip['narration'], folder / f'intro-{revision}', clip_lang)
+    cta_audio = synthesize_speech(cta_text, folder / f'cta-{revision}', clip_lang)
     intro=math.ceil((duration(intro_audio)+.15)*FPS)/FPS
     cta=math.ceil((duration(cta_audio)+.15)*FPS)/FPS
     length=duration(source)

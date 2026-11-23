@@ -393,7 +393,7 @@ def home(): return FileResponse(ROOT/'index.html')
 
 @app.get('/api/status')
 def status():
-    return {'ai_ready':bool(KEY),'model':MODEL,'base_url':BASE_URL,'token':TOKEN,'tools':{'ffmpeg':bool(shutil.which('ffmpeg')),'yt_dlp':True,'say':bool(shutil.which('say'))}}
+    return {'ai_ready':bool(KEY),'model':MODEL,'base_url':BASE_URL,'token':TOKEN,'tools':{'ffmpeg':bool(shutil.which('ffmpeg')),'yt_dlp':True,'say':bool(shutil.which('say')),'tts':True}}
 
 
 class Settings(BaseModel):

@@ -3,13 +3,14 @@
 
   # 🎬 LocalClip GTA VI · Auto Clipper
   
-  **Generator Video Pendek Vertikal Otomatis (YouTube Shorts, TikTok, Instagram Reels) Berbasis AI & Render Lokal macOS.**
+  **Generator Video Pendek Vertikal Otomatis (YouTube Shorts, TikTok, Instagram Reels) Berbasis AI & Render Lokal.**
 
   [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-  [![Platform](https://img.shields.io/badge/Platform-macOS%20(Apple%20Silicon%20%2F%20Intel)-black.svg)](https://apple.com)
+  [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-brightgreen.svg)](https://github.com/TSABIT1312/localclip-gtavi)
   [![FastAPI](https://img.shields.io/badge/Backend-FastAPI%20%2B%20Uvicorn-009688.svg)](https://fastapi.tiangolo.com/)
   [![FFmpeg](https://img.shields.io/badge/Render-FFmpeg%20Lokal-green.svg)](https://ffmpeg.org/)
   [![AI](https://img.shields.io/badge/AI-Anthropic%20%7C%209Router-purple.svg)](https://anthropic.com)
+  [![TTS](https://img.shields.io/badge/TTS-Edge--TTS%20%7C%20SAPI%20%7C%20Say-orange.svg)](https://github.com/rany2/edge-tts)
 
 </div>
 
@@ -19,12 +20,14 @@
 
 **LocalClip GTA VI (Auto Clipper)** adalah aplikasi web lokal untuk memotong dan mengonversi video panjang (seperti gameplay GTA, live streaming YouTube, podcast, atau rekaman MP4 lokal) menjadi klip vertikal pendek (9:16) yang siap diposting ke Shorts, TikTok, dan Reels.
 
-Aplikasi ini menggunakan model AI (Claude / 9Router) untuk menganalisis transkrip dialog, menemukan momen-momen paling seru, mendeteksi wajah streamer, dan merender video vertikal menggunakan **FFmpeg** serta suara narator sintetis lokal macOS tanpa perlu upload video ke cloud eksternal.
+Aplikasi ini menggunakan model AI (Claude / 9Router) untuk menganalisis transkrip dialog, menemukan momen-momen paling seru, mendeteksi wajah streamer, dan merender video vertikal menggunakan **FFmpeg** serta suara narator (Microsoft Neural, macOS Speech, atau Windows SAPI) tanpa perlu upload video ke cloud eksternal.
 
 ---
 
 ## ✨ Fitur Utama
 
+- 🌍 **Full Cross-Platform (Windows, Linux, macOS)**:
+  - Berjalan mulus di sistem operasi apa pun. Dilengkapi launcher sekali klik untuk Windows (`start.bat`), macOS (`start.command`), dan Linux (`start.sh`).
 - 🎮 **Layout Streamer Split Screen**:
   - **Atas**: Wajah streamer hasil crop rapi (0–460 px).
   - **Tengah**: Banner pembatas gelap bergaris kuning (`#ffd24a`) yang menampilkan nama *CREATOR / JUDUL KLIP*.
@@ -35,9 +38,10 @@ Aplikasi ini menggunakan model AI (Claude / 9Router) untuk menganalisis transkri
 - 🌐 **Dukungan 9Router & Anthropic API**:
   - Mendukung koneksi langsung ke Anthropic API maupun melalui AI proxy/gateway lokal seperti **9Router** (`http://127.0.0.1:20128`).
   - Mendukung custom model (misal `gacorr`, `claude-3-5-sonnet`, dll).
-- 🗣️ **Pilihan Bahasa Subtitle & Narasi**:
-  - 🇮🇩 **Bahasa Indonesia**: Narasi suara jernih macOS `Damayanti` dengan subtitle bahasa Indonesia.
-  - 🇺🇸 **English**: Narasi suara macOS `Samantha` dengan subtitle bahasa Inggris.
+- 🗣️ **Suara Narator Alami Multi-Bahasa**:
+  - 🇮🇩 **Bahasa Indonesia**: Narasi jernih dan natural dengan subtitle bahasa Indonesia.
+  - 🇺🇸 **English**: Narasi aksen Inggris dengan subtitle bahasa Inggris.
+  - Didukung oleh **Edge-TTS** lintas platform dengan fallback cerdas ke TTS sistem lokal (macOS `say` / Windows PowerShell SAPI / Linux `espeak`).
 - ⏱️ **Auto-Clamping Durasi Cerdas**:
   - Klip otomatis dijaga dalam rentang aman 10–55 detik (maksimal 60 detik) sehingga tidak pernah melebihi batas durasi Shorts/Reels.
 - 🔒 **100% Privat & Lokal**:
@@ -48,56 +52,58 @@ Aplikasi ini menggunakan model AI (Claude / 9Router) untuk menganalisis transkri
 
 ## 📋 Prasyarat Sistem
 
-Sebelum memulai, pastikan perangkat Anda memenuhi syarat berikut:
-1. **Sistem Operasi**: macOS (Apple Silicon M1/M2/M3/M4 atau Intel).
-2. **Python**: Versi `3.10` atau lebih tinggi.
-3. **FFmpeg & ffprobe**: Untuk proses potong dan render video.
-   ```bash
-   brew install ffmpeg
-   ```
-4. **Koneksi Internet**: Untuk mengunduh video dari YouTube dan komunikasi ke API AI.
+1. **Sistem Operasi**: Windows 10/11, macOS, atau Linux (Ubuntu, Debian, Fedora, Arch, dll).
+2. **Python**: Versi `3.10` atau lebih baru.
+3. **FFmpeg & ffprobe**:
+   - **Windows**: Jalankan di PowerShell: `winget install Gyan.FFmpeg` (atau download dari [gyan.dev/ffmpeg](https://www.gyan.dev/ffmpeg/builds/) lalu tambahkan folder `bin` ke System PATH).
+   - **macOS**: `brew install ffmpeg`
+   - **Linux**: `sudo apt update && sudo apt install ffmpeg`
+4. **Koneksi Internet**: Untuk download video YouTube, API AI, dan suara narator.
 
 ---
 
 ## 🚀 Tutorial Instalasi & Menjalankan
 
-Ikuti langkah-langkah mudah di bawah ini untuk menjalankan aplikasi di Mac Anda:
-
 ### 1. Clone Repository
-Buka terminal dan clone repositori ini:
 ```bash
 git clone https://github.com/TSABIT1312/localclip-gtavi.git
 cd localclip-gtavi
 ```
 
 ### 2. Buat Virtual Environment & Install Dependencies
-Buat lingkungan virtual Python agar dependensi terisolasi rapi:
-```bash
-# Buat virtual environment
-python3 -m venv .venv
 
-# Aktifkan virtual environment
-source .venv/bin/activate
-
-# Install semua dependensi
+#### Di Windows:
+Buka Command Prompt atau PowerShell di folder project:
+```cmd
+python -m venv .venv
+.venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+#### Di macOS & Linux:
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+---
+
 ### 3. Jalankan Aplikasi Web
 
-Anda bisa memilih salah satu dari dua cara berikut:
+Pilih cara tercepat sesuai sistem operasi Anda:
 
-#### Cara A: Sekali Klik (Launcher)
-Klik dua kali file **`start.command`** di Finder. Terminal akan otomatis terbuka dan menyalakan server.
+- **Windows**: Cukup klik dua kali file **`start.bat`** (atau ketik `start.bat` di CMD).
+- **macOS**: Klik dua kali file **`start.command`**.
+- **Linux**: Buka terminal dan jalankan `./start.sh` (atau `bash start.sh`).
 
-#### Cara B: Lewat Terminal
-Jalankan perintah berikut di terminal:
+*Atau secara manual lewat terminal di OS apa pun:*
 ```bash
-.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 8765
+python -m uvicorn app:app --host 127.0.0.1 --port 8765
 ```
 
 ### 4. Buka di Browser
-Setelah server berjalan, buka browser kesayangan Anda dan akses:
+Setelah server menyala, buka:
 👉 **[http://127.0.0.1:8765](http://127.0.0.1:8765)**
 
 ---
