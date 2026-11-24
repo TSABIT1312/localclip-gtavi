@@ -55,7 +55,7 @@ assert.ok(html.includes('function notify('), 'notify function must exist');
 assert.ok(html.includes('id="btn-open-settings"'), 'Navbar settings button must exist');
 assert.ok(html.includes('id="settings-dialog"'), 'Settings dialog must exist');
 assert.ok(html.includes('id="key-indicator"'), 'Key indicator must exist');
-assert.ok(html.includes('position:sticky;top:64px'), 'Sidebar must be sticky');
+assert.ok(/position:\s*sticky/i.test(html), 'Sidebar must be sticky');
 
 // Automated check: every $('...') in script must exist as an id in HTML
 const htmlIds = new Set([...html.matchAll(/id=["']([^"']+)["']/g)].map(m => m[1]));

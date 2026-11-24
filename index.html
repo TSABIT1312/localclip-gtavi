@@ -2,194 +2,1504 @@
 <html lang="id">
 
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Clip Local — Video Editor Studio</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ffffff'/%3E%3Cpath d='M12 9v14l12-7z' fill='%23000000'/%3E%3C/svg%3E">
-<style>
-:root{color-scheme:dark;--bg:#09090b;--panel:#111114;--raised:#18181d;--line:#27272f;--ink:#ffffff;--muted:#8e8e98;--accent:#ffffff;--radius:8px}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}button,input,select,textarea{font:inherit}button,a,input{touch-action:manipulation}
-button,.button{border:1px solid var(--line);background:var(--raised);color:var(--ink);border-radius:6px;padding:8px 13px;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center;align-items:center;gap:7px;font-weight:600;min-height:36px;font-size:13px;transition:background .15s,border-color .15s,color .15s}
-button:hover,.button:hover{background:#23232b;border-color:#42424f}
-button.primary,.button.primary{background:#ffffff;color:#000000;border-color:#ffffff;font-weight:700}
-button.primary:hover:not(:disabled),.button.primary:hover:not(:disabled){background:#e5e5e5;border-color:#e5e5e5;color:#000000}
-button:disabled{opacity:.35;cursor:not-allowed}
-button.quiet{background:transparent;border-color:var(--line);color:#d0d0d8}
-button.quiet:hover{background:#1c1c22;border-color:#ffffff;color:#ffffff}
-button.btn-danger{background:#161010;border-color:#3a2020;color:#f0a0a0}
-button.btn-danger:hover{background:#281818;border-color:#ffffff;color:#ffffff}
-button.btn-sm{min-height:28px!important;padding:4px 9px!important;font-size:11px!important}
-a{color:#ffffff;text-decoration:none}a:hover{text-decoration:underline}:focus-visible{outline:2px solid #ffffff;outline-offset:2px}[hidden]{display:none!important}
-h1,h2,h3,h4,p{margin-top:0}h1{font-size:26px;letter-spacing:-.8px;margin-bottom:4px}h2{font-size:18px;letter-spacing:-.3px;margin-bottom:6px}h3{font-size:15px;margin-bottom:6px}small,.muted{color:var(--muted)}small{font-size:12px}
-.eyebrow,.time,.rank{font:11px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.06em}
-.eyebrow{color:var(--muted);text-transform:uppercase}
-.time{font-size:12px;letter-spacing:0;font-variant-numeric:tabular-nums}
-.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.spread{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.topbar{height:64px;padding:0 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px;background:#060608;position:sticky;top:0;z-index:100}
-.brand{font-size:18px;letter-spacing:-.6px;font-weight:800;white-space:nowrap;display:flex;align-items:center}
-.brand-mark{display:inline-grid;place-items:center;background:#ffffff;color:#000000;width:26px;height:26px;border-radius:5px;margin-right:10px;font-size:14px;font-weight:900}
-.brand span:last-child{font-weight:400;color:var(--muted)}
-.topbar-note{border-left:1px solid var(--line);padding-left:14px;margin-left:10px}
-.status{display:inline-flex;align-items:center;gap:7px;font-size:11px;color:#d0d0d5;padding:4px 9px;border:1px solid var(--line);border-radius:5px;background:#0d0d10}
-.status::before{content:'';width:6px;height:6px;background:#ffffff;border-radius:50%;box-shadow:0 0 5px #ffffff}
-.workspace{display:grid;grid-template-columns:310px minmax(0,1fr);max-width:1720px;margin:auto;min-height:calc(100vh - 64px);align-items:start}
-/* Sticky Fixed Sidebar */
-.sidebar{border-right:1px solid var(--line);padding:22px 18px;background:var(--panel);position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto;overscroll-behavior:contain}
-.sidebar-heading{margin-bottom:18px}
-.sidebar-heading h2{margin:0 0 4px;font-size:16px;letter-spacing:-.3px}
-.sidebar-heading p{margin:0;color:var(--muted);font-size:12px}
-label{display:block;margin:12px 0 5px;font-size:12px;font-weight:600;color:#e8e8ed}
-input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{width:100%;min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#0a0a0d;color:#ffffff;font-size:13px}
-input::placeholder{color:#585862}
-input[type=file]{font-size:11px;padding:6px 8px}
-input::file-selector-button{background:#1f1f26;border:1px solid var(--line);border-radius:4px;padding:4px 8px;margin-right:8px;color:#ffffff;font-size:11px;cursor:pointer}
-input[type=checkbox],input[type=radio],input[type=range]{accent-color:#ffffff}
-textarea{resize:vertical}
-input[type=range]{width:100%;min-width:0;cursor:pointer;margin:0;min-height:22px}
-.check{display:flex;align-items:flex-start;gap:8px;font-weight:400;line-height:1.45;color:#c0c0c8;font-size:12px;cursor:pointer}
-.check input{flex-shrink:0;margin-top:2px}
-.formrow{display:grid;grid-template-columns:minmax(0,1fr) 72px;gap:8px}
-.wide{width:100%;margin-top:16px}
-.upload-option{border:1px dashed var(--line);border-radius:6px;padding:10px 12px;margin-top:10px}
-.upload-option summary{font-size:12px;cursor:pointer;font-weight:600}
-section.library{min-width:0;padding:26px 28px}
-.section-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px}
-.section-head p{margin:0;color:var(--muted);font-size:13px}
-.library-bar{padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:22px}
-.library-bar strong{font-size:13px}
-.error{color:#ffffff;background:#241414;border:1px solid #5a2828;padding:8px 12px;border-radius:6px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}
-.error:empty{display:none}#message{margin-bottom:16px}
-.job{margin-bottom:34px;background:#0d0d10;border:1px solid var(--line);border-radius:var(--radius);padding:18px}
-.job-head{display:flex;justify-content:space-between;gap:14px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line)}
-.job-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.job-title-row h3{margin:0;font-size:16px}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:14px;margin-top:16px}
-.card{min-width:0;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#141418;display:flex;flex-direction:column}
-.card-preview{position:relative;background:#000000;aspect-ratio:9/16;max-height:340px;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.card video{width:100%;height:100%;display:block;object-fit:contain;background:#000000}
-.card img{width:100%;height:100%;display:block;object-fit:contain;background:#000000}
-.clip-number{position:absolute;top:8px;left:8px;padding:3px 6px;background:rgba(0,0,0,0.85);border:1px solid rgba(255,255,255,0.25);color:#ffffff;border-radius:3px;font:10px ui-monospace,monospace;font-weight:700;pointer-events:none}
-.clip-duration-badge{position:absolute;bottom:8px;right:8px;padding:2px 5px;background:rgba(0,0,0,0.85);border:1px solid rgba(255,255,255,0.25);color:#ffffff;border-radius:3px;font:10px ui-monospace,monospace;pointer-events:none}
-.card-body{padding:12px;flex:1;display:flex;flex-direction:column;justify-content:space-between}
-.card h4{font-size:14px;line-height:1.35;margin:4px 0 6px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.card p{font-size:11px;color:var(--muted);margin:0 0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.card-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
-.empty{min-height:380px;display:grid;place-content:center;text-align:center;justify-items:center;border:1px dashed var(--line);border-radius:var(--radius);padding:24px}
-.empty-reel{width:64px;height:50px;border:1px solid #ffffff;border-radius:7px;display:grid;place-items:center;font-size:20px;color:#ffffff;margin-bottom:16px;box-shadow:6px -6px 0 -1px var(--bg),6px -6px 0 0 #ffffff}
-.empty h3{font-size:18px;margin-bottom:4px}
-.empty p{max-width:320px;color:var(--muted);font-size:13px}
-.footer{padding:12px 24px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);display:flex;justify-content:space-between;gap:12px;background:#060608}
-/* Dialog & Editor */
-dialog{padding:0;color:var(--ink);background:#09090b;border:1px solid #3c3c45;border-radius:10px;width:min(1440px,calc(100% - 32px));max-height:calc(100dvh - 32px);overflow:auto}
-dialog::backdrop{background:rgba(0,0,0,0.88);backdrop-filter:blur(6px)}
-.editor-head{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px;background:#0d0d11}
-.editor-head h2{margin:2px 0 0;font-size:17px}
-.editor-head .eyebrow{font-size:10px}
-.editor-body{display:grid;grid-template-columns:minmax(0,1fr) 320px}
-.monitor-column{min-width:0;padding:16px 20px;background:#000000}
-.monitor-heading{margin-bottom:10px}
-.monitor-stage{height:clamp(220px,36vh,440px);display:flex;align-items:center;justify-content:center;background:#050507;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.crop-wrapper{position:relative;max-width:100%;max-height:100%;aspect-ratio:16/9;user-select:none;touch-action:none;flex-shrink:0}
-.crop-wrapper video{display:block;width:100%;height:100%;pointer-events:none}
-.crop-box{position:absolute;border:2px solid #ffffff;box-shadow:0 0 0 3000px rgba(0,0,0,0.65);cursor:move;touch-action:none}
-.crop-label{position:absolute;top:4px;left:4px;background:#ffffff;color:#000000;font:9px ui-monospace,monospace;font-weight:800;letter-spacing:.08em;padding:2px 4px;pointer-events:none}
-.crop-h{position:absolute;width:16px;height:16px;border:2px solid #ffffff;background:#000000;border-radius:3px}
-.crop-h[data-h=tl]{top:-8px;left:-8px;cursor:nwse-resize}.crop-h[data-h=tr]{top:-8px;right:-8px;cursor:nesw-resize}.crop-h[data-h=bl]{bottom:-8px;left:-8px;cursor:nesw-resize}.crop-h[data-h=br]{bottom:-8px;right:-8px;cursor:nwse-resize}
-.timeline-panel{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:#0b0b0e}
-.capcut-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--line)}
-.capcut-toolgroup{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-.btn-capcut{min-height:28px!important;padding:3px 9px!important;font-size:11px!important;font-weight:600;border-radius:4px!important;background:#18181e!important;border:1px solid #363640!important;color:#ffffff!important}
-.btn-capcut:hover:not(:disabled){background:#282832!important;border-color:#ffffff!important}
-.btn-capcut.active{background:#ffffff!important;color:#000000!important;border-color:#ffffff!important}
-.btn-capcut-danger{color:#ffffff!important;border-color:#555560!important}
-.btn-capcut-danger:hover{background:#2a2a32!important;border-color:#ffffff!important}
-.btn-capcut-danger.active{background:#ffffff!important;color:#000000!important;border-color:#ffffff!important}
-.capcut-time-display{display:flex;align-items:center;gap:6px;font:11px/1 ui-monospace,monospace}
-.time-sep{color:var(--muted);opacity:.6}
-.duration-badge{font:11px ui-monospace,monospace;background:#16161b;color:#ffffff;border:1px solid #3a3a44;border-radius:4px;padding:3px 6px;font-weight:700}
-.timeline-ruler{display:flex;justify-content:space-between;color:#80808a;font:10px ui-monospace,monospace;margin-bottom:5px;border-bottom:1px solid #202026;padding-bottom:3px}
-.timeline-ruler span{position:relative}
-.timeline-ruler span::after{content:'|';position:absolute;bottom:-4px;left:0;font-size:7px;opacity:.5}
-/* Timeline Track with Filmstrip & Waveform */
-.timeline-track{height:76px;position:relative;background:#09090c;border-radius:6px;border:1px solid #34343e;overflow:hidden;user-select:none;touch-action:none;cursor:pointer}
-.timeline-track::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(5% - 1px),rgba(255,255,255,0.03) calc(5% - 1px),rgba(255,255,255,0.03) 5%);pointer-events:none;z-index:2}
-.timeline-filmstrip{position:absolute;inset:0;background-size:100% 100%;background-position:center;background-repeat:no-repeat;opacity:.78;filter:contrast(1.05) brightness(0.9);pointer-events:none;z-index:1}
-.timeline-waveform{position:absolute;left:0;right:0;bottom:0;height:24px;background-size:100% 100%;background-position:bottom;background-repeat:no-repeat;opacity:.7;pointer-events:none;z-index:2;filter:invert(1) drop-shadow(0 0 2px rgba(0,0,0,0.8))}
-.timeline-dim{position:absolute;top:0;bottom:0;background:rgba(0,0,0,0.82);pointer-events:none;z-index:3}.dim-left{left:0}.dim-right{right:0}
-.timeline-selection{position:absolute;top:0;bottom:0;border:2px solid #ffffff;border-radius:5px;background:rgba(255,255,255,0.06);z-index:4;touch-action:none;user-select:none;display:flex;align-items:stretch;box-shadow:0 0 0 1px rgba(0,0,0,0.8)}
-.timeline-selection.dragging{box-shadow:0 0 16px rgba(255,255,255,0.65);border-color:#ffffff}
-.clip-header-badge{position:absolute;top:3px;left:18px;right:18px;display:flex;align-items:center;justify-content:space-between;font:10px/1 ui-monospace,monospace;font-weight:700;color:#ffffff;background:rgba(0,0,0,0.78);padding:3px 7px;border-radius:3px;border:1px solid rgba(255,255,255,0.22);pointer-events:none;z-index:5;text-shadow:0 1px 2px #000}
-.capcut-handle{width:16px;background:#ffffff;cursor:ew-resize;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;flex-shrink:0;z-index:6}
-.handle-left{border-radius:3px 0 0 3px}.handle-right{border-radius:0 3px 3px 0}
-.capcut-handle::after{content:'';width:3px;height:20px;border-left:1px solid #000000;border-right:1px solid #000000;opacity:.85}
-.capcut-handle:hover{background:#e2e2e8;box-shadow:0 0 10px rgba(255,255,255,0.9)}
-.selection-body{flex:1;cursor:grab;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;position:relative}
-.selection-body:active{cursor:grabbing}
-.timeline-playhead{position:absolute;top:0;bottom:0;width:2px;background:#ffffff;pointer-events:none;z-index:10;box-shadow:0 0 6px rgba(255,255,255,0.9)}
-.playhead-needle{position:absolute;top:-1px;left:-7px;width:16px;height:14px;background:#ffffff;clip-path:polygon(0 0, 100% 0, 50% 100%);pointer-events:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.8))}
-.timeline-cut-zone{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,0.12),rgba(255,255,255,0.12) 8px,rgba(0,0,0,0.65) 8px,rgba(0,0,0,0.65) 16px);border-left:2px dashed #ffffff;border-right:2px dashed #ffffff;z-index:5;touch-action:none;user-select:none;display:flex;align-items:stretch;cursor:grab}
-.timeline-cut-zone.dragging{box-shadow:0 0 16px rgba(255,255,255,0.6);cursor:grabbing}
-.cut-handle{width:14px;background:#202025;border:1px solid #ffffff;cursor:ew-resize;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;flex-shrink:0;z-index:7}
-.handle-cut-left{border-radius:3px 0 0 3px}.handle-cut-right{border-radius:0 3px 3px 0}
-.cut-handle::after{content:'';width:2px;height:16px;background:#ffffff;opacity:.9}
-.cut-handle:hover{background:#3a3a45;box-shadow:0 0 8px #ffffff}
-.cut-body{flex:1;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.cut-label{font:9px/1 ui-monospace,monospace;font-weight:800;letter-spacing:.06em;color:#000000;background:#ffffff;padding:2px 6px;border-radius:3px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,0.8)}
-.trim-slider-row{display:grid;grid-template-columns:42px minmax(0,1fr);gap:10px;align-items:center;margin-top:6px}
-.trim-slider-row label{margin:0;font-size:11px;color:var(--muted)}
-.time-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
-.time-fields label{display:flex;justify-content:space-between;align-items:center;gap:6px}
-.time-fields label button{padding:0;border:0;color:#ffffff;background:none;font-size:10px;min-height:22px;text-decoration:underline;cursor:pointer}
-.time-fields input{font:13px ui-monospace,monospace!important}
-.timeline-note{margin-top:8px;margin-bottom:0;color:var(--muted);font-size:11px}
-.inspector{min-width:0;border-left:1px solid var(--line);background:var(--panel);padding:18px;max-height:calc(100dvh - 180px);overflow:auto}
-.inspector>h3{margin-bottom:14px;font-size:14px}
-.inspector details{padding:14px 0;border-top:1px solid var(--line)}
-.inspector summary{font-size:12px;list-style-position:outside;margin-left:14px;font-weight:600;cursor:pointer}
-.layout-options{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
-.layout-option{position:relative;margin:0;cursor:pointer}
-.layout-option input{position:absolute;opacity:0}
-.layout-option span{display:flex;align-items:center;flex-direction:column;border:1px solid var(--line);border-radius:6px;padding:8px 3px;font-size:10px;color:var(--muted);gap:6px;min-height:90px}
-.layout-option input:checked+span{border-color:#ffffff;color:#ffffff;background:rgba(255,255,255,0.06)}
-.layout-icon{display:flex;width:24px;height:40px;border:1px solid currentColor;border-radius:3px;padding:3px;flex-direction:column;gap:3px}
-.layout-icon i{display:block;background:currentColor;opacity:.65;flex:1;border-radius:1px}
-.layout-icon.contained i:last-child{flex:0 0 12px;margin:auto 0}
-.layout-icon.solo i{flex:1}
-.presets{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
-.presets button{font-size:11px;padding:5px;min-height:30px}
-.crop-fields{display:grid;grid-template-columns:1fr 1fr;gap:0 8px}
-.crop-fields label{font-size:11px}
-.inspector .crop-fields input{padding:6px;font-size:11px}
-.inspector textarea{min-height:140px;font:11px/1.5 ui-monospace,monospace}
-.editor-footer{padding:12px 20px;border-top:1px solid var(--line);background:#0d0d11;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.editor-footer small{max-width:500px}
-.editor-error{padding:0 20px;background:#0d0d11}
-.editor-error p{padding:8px 0;margin:0}
-.loading-note{color:#ffffff;font-size:12px}
-/* Settings Modal */
-.settings-dialog{width:min(440px,calc(100% - 32px));padding:0}
-.settings-head{padding:14px 18px;border-bottom:1px solid var(--line);background:#0d0d11}
-.settings-form{padding:18px}
-.key-dot{width:7px;height:7px;border-radius:50%;background:#555560;display:inline-block;margin-right:2px}
-.key-dot.ready{background:#ffffff;box-shadow:0 0 6px #ffffff}
-/* Toast Notification System */
-.toast-container{position:fixed;top:20px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:10px;pointer-events:none;max-width:min(380px,calc(100vw - 32px))}
-.toast{pointer-events:auto;background:#111115;color:#ffffff;border:1px solid #3c3c45;border-radius:8px;padding:12px 14px;box-shadow:0 12px 35px rgba(0,0,0,0.85);display:flex;align-items:flex-start;gap:12px;font-size:13px;line-height:1.45;animation:toastIn .22s cubic-bezier(0.16,1,0.3,1);transition:opacity .2s,transform .2s}
-.toast.hide{opacity:0;transform:translateX(20px)}
-@keyframes toastIn{from{opacity:0;transform:translateY(-12px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
-.toast-icon{font-size:16px;flex-shrink:0;margin-top:1px}
-.toast-content{flex:1;min-width:0}
-.toast-title{font-weight:700;font-size:13px;color:#ffffff;margin-bottom:2px}
-.toast-body{font-size:12px;color:#b0b0b8;word-break:break-word}
-.toast-close{background:none!important;border:none!important;color:#787882!important;padding:0!important;min-height:auto!important;font-size:18px!important;line-height:1;cursor:pointer;flex-shrink:0;margin-left:4px}
-.toast-close:hover{color:#ffffff!important}
-@media(max-width:1100px){.workspace{grid-template-columns:280px minmax(0,1fr)}.editor-body{grid-template-columns:minmax(0,1fr) 280px}.topbar-note{display:none}}
-@media(max-width:800px){.topbar{padding:0 16px}.workspace{grid-template-columns:1fr}.sidebar{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}.editor-body{grid-template-columns:1fr}.inspector{max-height:none;border-left:0;border-top:1px solid var(--line)}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Clip Local — Video Editor Studio</title>
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ffffff'/%3E%3Cpath d='M12 9v14l12-7z' fill='%23000000'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #09090b;
+      --panel: #111114;
+      --raised: #18181d;
+      --line: #27272f;
+      --ink: #ffffff;
+      --muted: #8e8e98;
+      --accent: #ffffff;
+      --radius: 8px
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit
+    }
+
+    button,
+    a,
+    input {
+      touch-action: manipulation
+    }
+
+    button,
+    .button {
+      border: 1px solid var(--line);
+      background: var(--raised);
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 8px 13px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 7px;
+      font-weight: 600;
+      min-height: 36px;
+      font-size: 13px;
+      transition: background .15s, border-color .15s, color .15s
+    }
+
+    button:hover,
+    .button:hover {
+      background: #23232b;
+      border-color: #42424f
+    }
+
+    button.primary,
+    .button.primary {
+      background: #ffffff;
+      color: #000000;
+      border-color: #ffffff;
+      font-weight: 700
+    }
+
+    button.primary:hover:not(:disabled),
+    .button.primary:hover:not(:disabled) {
+      background: #e5e5e5;
+      border-color: #e5e5e5;
+      color: #000000
+    }
+
+    button:disabled {
+      opacity: .35;
+      cursor: not-allowed
+    }
+
+    button.quiet {
+      background: transparent;
+      border-color: var(--line);
+      color: #d0d0d8
+    }
+
+    button.quiet:hover {
+      background: #1c1c22;
+      border-color: #ffffff;
+      color: #ffffff
+    }
+
+    button.btn-danger {
+      background: #161010;
+      border-color: #3a2020;
+      color: #f0a0a0
+    }
+
+    button.btn-danger:hover {
+      background: #281818;
+      border-color: #ffffff;
+      color: #ffffff
+    }
+
+    button.btn-sm {
+      min-height: 28px !important;
+      padding: 4px 9px !important;
+      font-size: 11px !important
+    }
+
+    a {
+      color: #ffffff;
+      text-decoration: none
+    }
+
+    a:hover {
+      text-decoration: underline
+    }
+
+    :focus-visible {
+      outline: 2px solid #ffffff;
+      outline-offset: 2px
+    }
+
+    [hidden] {
+      display: none !important
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    p {
+      margin-top: 0
+    }
+
+    h1 {
+      font-size: 26px;
+      letter-spacing: -.8px;
+      margin-bottom: 4px
+    }
+
+    h2 {
+      font-size: 18px;
+      letter-spacing: -.3px;
+      margin-bottom: 6px
+    }
+
+    h3 {
+      font-size: 15px;
+      margin-bottom: 6px
+    }
+
+    small,
+    .muted {
+      color: var(--muted)
+    }
+
+    small {
+      font-size: 12px
+    }
+
+    .eyebrow,
+    .time,
+    .rank {
+      font: 11px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: .06em
+    }
+
+    .eyebrow {
+      color: var(--muted);
+      text-transform: uppercase
+    }
+
+    .time {
+      font-size: 12px;
+      letter-spacing: 0;
+      font-variant-numeric: tabular-nums
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .spread {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px
+    }
+
+    .topbar {
+      height: 64px;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: #060608;
+      position: sticky;
+      top: 0;
+      z-index: 100
+    }
+
+    .brand {
+      font-size: 18px;
+      letter-spacing: -.6px;
+      font-weight: 800;
+      white-space: nowrap;
+      display: flex;
+      align-items: center
+    }
+
+    .brand-mark {
+      display: inline-grid;
+      place-items: center;
+      background: #ffffff;
+      color: #000000;
+      width: 26px;
+      height: 26px;
+      border-radius: 5px;
+      margin-right: 10px;
+      font-size: 14px;
+      font-weight: 900
+    }
+
+    .brand span:last-child {
+      font-weight: 400;
+      color: var(--muted)
+    }
+
+    .topbar-note {
+      border-left: 1px solid var(--line);
+      padding-left: 14px;
+      margin-left: 10px
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      color: #d0d0d5;
+      padding: 4px 9px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: #0d0d10
+    }
+
+    .status::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 0 5px #ffffff
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 310px minmax(0, 1fr);
+      max-width: 1720px;
+      margin: auto;
+      min-height: calc(100vh - 64px);
+      align-items: start
+    }
+
+    /* Sticky Fixed Sidebar */
+    .sidebar {
+      border-right: 1px solid var(--line);
+      padding: 22px 18px;
+      background: var(--panel);
+      position: sticky;
+      top: 64px;
+      height: calc(100vh - 64px);
+      overflow-y: auto;
+      overscroll-behavior: contain
+    }
+
+    .sidebar-heading {
+      margin-bottom: 18px
+    }
+
+    .sidebar-heading h2 {
+      margin: 0 0 4px;
+      font-size: 16px;
+      letter-spacing: -.3px
+    }
+
+    .sidebar-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 5px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #e8e8ed
+    }
+
+    input:not([type=checkbox]):not([type=radio]):not([type=range]),
+    select,
+    textarea {
+      width: 100%;
+      min-width: 0;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #0a0a0d;
+      color: #ffffff;
+      font-size: 13px
+    }
+
+    input::placeholder {
+      color: #585862
+    }
+
+    input[type=file] {
+      font-size: 11px;
+      padding: 6px 8px
+    }
+
+    input::file-selector-button {
+      background: #1f1f26;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 4px 8px;
+      margin-right: 8px;
+      color: #ffffff;
+      font-size: 11px;
+      cursor: pointer
+    }
+
+    input[type=checkbox],
+    input[type=radio],
+    input[type=range] {
+      accent-color: #ffffff
+    }
+
+    textarea {
+      resize: vertical
+    }
+
+    input[type=range] {
+      width: 100%;
+      min-width: 0;
+      cursor: pointer;
+      margin: 0;
+      min-height: 22px
+    }
+
+    .check {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: 400;
+      line-height: 1.45;
+      color: #c0c0c8;
+      font-size: 12px;
+      cursor: pointer
+    }
+
+    .check input {
+      flex-shrink: 0;
+      margin-top: 2px
+    }
+
+    .formrow {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 72px;
+      gap: 8px
+    }
+
+    .wide {
+      width: 100%;
+      margin-top: 16px
+    }
+
+    .upload-option {
+      border: 1px dashed var(--line);
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-top: 10px
+    }
+
+    .upload-option summary {
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 600
+    }
+
+    section.library {
+      min-width: 0;
+      padding: 26px 28px
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .library-bar {
+      padding: 10px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 22px
+    }
+
+    .library-bar strong {
+      font-size: 13px
+    }
+
+    .error {
+      color: #ffffff;
+      background: #241414;
+      border: 1px solid #5a2828;
+      padding: 8px 12px;
+      border-radius: 6px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-size: 12px
+    }
+
+    .error:empty {
+      display: none
+    }
+
+    #message {
+      margin-bottom: 16px
+    }
+
+    .job {
+      margin-bottom: 34px;
+      background: #0d0d10;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px
+    }
+
+    .job-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .job-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap
+    }
+
+    .job-title-row h3 {
+      margin: 0;
+      font-size: 16px
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
+      gap: 14px;
+      margin-top: 16px
+    }
+
+    .card {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      background: #141418;
+      display: flex;
+      flex-direction: column
+    }
+
+    .card-preview {
+      position: relative;
+      background: #000000;
+      aspect-ratio: 9/16;
+      max-height: 340px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .card video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+      background: #000000
+    }
+
+    .card img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+      background: #000000
+    }
+
+    .clip-number {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      padding: 3px 6px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      border-radius: 3px;
+      font: 10px ui-monospace, monospace;
+      font-weight: 700;
+      pointer-events: none
+    }
+
+    .clip-duration-badge {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      padding: 2px 5px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      border-radius: 3px;
+      font: 10px ui-monospace, monospace;
+      pointer-events: none
+    }
+
+    .card-body {
+      padding: 12px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between
+    }
+
+    .card h4 {
+      font-size: 14px;
+      line-height: 1.35;
+      margin: 4px 0 6px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical
+    }
+
+    .card p {
+      font-size: 11px;
+      color: var(--muted);
+      margin: 0 0 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+      flex-wrap: wrap
+    }
+
+    .empty {
+      min-height: 380px;
+      display: grid;
+      place-content: center;
+      text-align: center;
+      justify-items: center;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      padding: 24px
+    }
+
+    .empty-reel {
+      width: 64px;
+      height: 50px;
+      border: 1px solid #ffffff;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      color: #ffffff;
+      margin-bottom: 16px;
+      box-shadow: 6px -6px 0 -1px var(--bg), 6px -6px 0 0 #ffffff
+    }
+
+    .empty h3 {
+      font-size: 18px;
+      margin-bottom: 4px
+    }
+
+    .empty p {
+      max-width: 320px;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .footer {
+      padding: 12px 24px;
+      border-top: 1px solid var(--line);
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      background: #060608
+    }
+
+    /* Dialog & Editor */
+    dialog {
+      padding: 0;
+      color: var(--ink);
+      background: #09090b;
+      border: 1px solid #3c3c45;
+      border-radius: 10px;
+      width: min(1440px, calc(100% - 32px));
+      max-height: calc(100dvh - 32px);
+      overflow: auto
+    }
+
+    dialog::backdrop {
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(6px)
+    }
+
+    .editor-head {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: #0d0d11
+    }
+
+    .editor-head h2 {
+      margin: 2px 0 0;
+      font-size: 17px
+    }
+
+    .editor-head .eyebrow {
+      font-size: 10px
+    }
+
+    .editor-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px
+    }
+
+    .monitor-column {
+      min-width: 0;
+      padding: 16px 20px;
+      background: #000000
+    }
+
+    .monitor-heading {
+      margin-bottom: 10px
+    }
+
+    .monitor-stage {
+      height: clamp(220px, 36vh, 440px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #050507;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden
+    }
+
+    .crop-wrapper {
+      position: relative;
+      max-width: 100%;
+      max-height: 100%;
+      aspect-ratio: 16/9;
+      user-select: none;
+      touch-action: none;
+      flex-shrink: 0
+    }
+
+    .crop-wrapper video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      pointer-events: none
+    }
+
+    .crop-box {
+      position: absolute;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 0 3000px rgba(0, 0, 0, 0.65);
+      cursor: move;
+      touch-action: none
+    }
+
+    .crop-label {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      background: #ffffff;
+      color: #000000;
+      font: 9px ui-monospace, monospace;
+      font-weight: 800;
+      letter-spacing: .08em;
+      padding: 2px 4px;
+      pointer-events: none
+    }
+
+    .crop-h {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ffffff;
+      background: #000000;
+      border-radius: 3px
+    }
+
+    .crop-h[data-h=tl] {
+      top: -8px;
+      left: -8px;
+      cursor: nwse-resize
+    }
+
+    .crop-h[data-h=tr] {
+      top: -8px;
+      right: -8px;
+      cursor: nesw-resize
+    }
+
+    .crop-h[data-h=bl] {
+      bottom: -8px;
+      left: -8px;
+      cursor: nesw-resize
+    }
+
+    .crop-h[data-h=br] {
+      bottom: -8px;
+      right: -8px;
+      cursor: nwse-resize
+    }
+
+    .timeline-panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px 14px;
+      background: #0b0b0e
+    }
+
+    .capcut-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .capcut-toolgroup {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap
+    }
+
+    .btn-capcut {
+      min-height: 28px !important;
+      padding: 3px 9px !important;
+      font-size: 11px !important;
+      font-weight: 600;
+      border-radius: 4px !important;
+      background: #18181e !important;
+      border: 1px solid #363640 !important;
+      color: #ffffff !important
+    }
+
+    .btn-capcut:hover:not(:disabled) {
+      background: #282832 !important;
+      border-color: #ffffff !important
+    }
+
+    .btn-capcut.active {
+      background: #ffffff !important;
+      color: #000000 !important;
+      border-color: #ffffff !important
+    }
+
+    .btn-capcut-danger {
+      color: #ffffff !important;
+      border-color: #555560 !important
+    }
+
+    .btn-capcut-danger:hover {
+      background: #2a2a32 !important;
+      border-color: #ffffff !important
+    }
+
+    .btn-capcut-danger.active {
+      background: #ffffff !important;
+      color: #000000 !important;
+      border-color: #ffffff !important
+    }
+
+    .capcut-time-display {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font: 11px/1 ui-monospace, monospace
+    }
+
+    .time-sep {
+      color: var(--muted);
+      opacity: .6
+    }
+
+    .duration-badge {
+      font: 11px ui-monospace, monospace;
+      background: #16161b;
+      color: #ffffff;
+      border: 1px solid #3a3a44;
+      border-radius: 4px;
+      padding: 3px 6px;
+      font-weight: 700
+    }
+
+    .timeline-ruler {
+      display: flex;
+      justify-content: space-between;
+      color: #80808a;
+      font: 10px ui-monospace, monospace;
+      margin-bottom: 5px;
+      border-bottom: 1px solid #202026;
+      padding-bottom: 3px
+    }
+
+    .timeline-ruler span {
+      position: relative
+    }
+
+    .timeline-ruler span::after {
+      content: '|';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      font-size: 7px;
+      opacity: .5
+    }
+
+    /* Timeline Track with Filmstrip & Waveform */
+    .timeline-track {
+      height: 76px;
+      position: relative;
+      background: #09090c;
+      border-radius: 6px;
+      border: 1px solid #34343e;
+      overflow: hidden;
+      user-select: none;
+      touch-action: none;
+      cursor: pointer
+    }
+
+    .timeline-track::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(90deg, transparent 0, transparent calc(5% - 1px), rgba(255, 255, 255, 0.03) calc(5% - 1px), rgba(255, 255, 255, 0.03) 5%);
+      pointer-events: none;
+      z-index: 2
+    }
+
+    .timeline-filmstrip {
+      position: absolute;
+      inset: 0;
+      background-size: 100% 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: .78;
+      filter: contrast(1.05) brightness(0.9);
+      pointer-events: none;
+      z-index: 1
+    }
+
+    .timeline-waveform {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 24px;
+      background-size: 100% 100%;
+      background-position: bottom;
+      background-repeat: no-repeat;
+      opacity: .7;
+      pointer-events: none;
+      z-index: 2;
+      filter: invert(1) drop-shadow(0 0 2px rgba(0, 0, 0, 0.8))
+    }
+
+    .timeline-dim {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.82);
+      pointer-events: none;
+      z-index: 3
+    }
+
+    .dim-left {
+      left: 0
+    }
+
+    .dim-right {
+      right: 0
+    }
+
+    .timeline-selection {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      border: 2px solid #ffffff;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      z-index: 4;
+      touch-action: none;
+      user-select: none;
+      display: flex;
+      align-items: stretch;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8)
+    }
+
+    .timeline-selection.dragging {
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.65);
+      border-color: #ffffff
+    }
+
+    .clip-header-badge {
+      position: absolute;
+      top: 3px;
+      left: 18px;
+      right: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font: 10px/1 ui-monospace, monospace;
+      font-weight: 700;
+      color: #ffffff;
+      background: rgba(0, 0, 0, 0.78);
+      padding: 3px 7px;
+      border-radius: 3px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      pointer-events: none;
+      z-index: 5;
+      text-shadow: 0 1px 2px #000
+    }
+
+    .capcut-handle {
+      width: 16px;
+      background: #ffffff;
+      cursor: ew-resize;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: none;
+      user-select: none;
+      flex-shrink: 0;
+      z-index: 6
+    }
+
+    .handle-left {
+      border-radius: 3px 0 0 3px
+    }
+
+    .handle-right {
+      border-radius: 0 3px 3px 0
+    }
+
+    .capcut-handle::after {
+      content: '';
+      width: 3px;
+      height: 20px;
+      border-left: 1px solid #000000;
+      border-right: 1px solid #000000;
+      opacity: .85
+    }
+
+    .capcut-handle:hover {
+      background: #e2e2e8;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.9)
+    }
+
+    .selection-body {
+      flex: 1;
+      cursor: grab;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: none;
+      user-select: none;
+      position: relative
+    }
+
+    .selection-body:active {
+      cursor: grabbing
+    }
+
+    .timeline-playhead {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #ffffff;
+      pointer-events: none;
+      z-index: 10;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.9)
+    }
+
+    .playhead-needle {
+      position: absolute;
+      top: -1px;
+      left: -7px;
+      width: 16px;
+      height: 14px;
+      background: #ffffff;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      pointer-events: none;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8))
+    }
+
+    .timeline-cut-zone {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.12) 8px, rgba(0, 0, 0, 0.65) 8px, rgba(0, 0, 0, 0.65) 16px);
+      border-left: 2px dashed #ffffff;
+      border-right: 2px dashed #ffffff;
+      z-index: 5;
+      touch-action: none;
+      user-select: none;
+      display: flex;
+      align-items: stretch;
+      cursor: grab
+    }
+
+    .timeline-cut-zone.dragging {
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.6);
+      cursor: grabbing
+    }
+
+    .cut-handle {
+      width: 14px;
+      background: #202025;
+      border: 1px solid #ffffff;
+      cursor: ew-resize;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: none;
+      user-select: none;
+      flex-shrink: 0;
+      z-index: 7
+    }
+
+    .handle-cut-left {
+      border-radius: 3px 0 0 3px
+    }
+
+    .handle-cut-right {
+      border-radius: 0 3px 3px 0
+    }
+
+    .cut-handle::after {
+      content: '';
+      width: 2px;
+      height: 16px;
+      background: #ffffff;
+      opacity: .9
+    }
+
+    .cut-handle:hover {
+      background: #3a3a45;
+      box-shadow: 0 0 8px #ffffff
+    }
+
+    .cut-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none
+    }
+
+    .cut-label {
+      font: 9px/1 ui-monospace, monospace;
+      font-weight: 800;
+      letter-spacing: .06em;
+      color: #000000;
+      background: #ffffff;
+      padding: 2px 6px;
+      border-radius: 3px;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8)
+    }
+
+    .trim-slider-row {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      margin-top: 6px
+    }
+
+    .trim-slider-row label {
+      margin: 0;
+      font-size: 11px;
+      color: var(--muted)
+    }
+
+    .time-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 6px
+    }
+
+    .time-fields label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px
+    }
+
+    .time-fields label button {
+      padding: 0;
+      border: 0;
+      color: #ffffff;
+      background: none;
+      font-size: 10px;
+      min-height: 22px;
+      text-decoration: underline;
+      cursor: pointer
+    }
+
+    .time-fields input {
+      font: 13px ui-monospace, monospace !important
+    }
+
+    .timeline-note {
+      margin-top: 8px;
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 11px
+    }
+
+    .inspector {
+      min-width: 0;
+      border-left: 1px solid var(--line);
+      background: var(--panel);
+      padding: 18px;
+      max-height: calc(100dvh - 180px);
+      overflow: auto
+    }
+
+    .inspector>h3 {
+      margin-bottom: 14px;
+      font-size: 14px
+    }
+
+    .inspector details {
+      padding: 14px 0;
+      border-top: 1px solid var(--line)
+    }
+
+    .inspector summary {
+      font-size: 12px;
+      list-style-position: outside;
+      margin-left: 14px;
+      font-weight: 600;
+      cursor: pointer
+    }
+
+    .layout-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 10px
+    }
+
+    .layout-option {
+      position: relative;
+      margin: 0;
+      cursor: pointer
+    }
+
+    .layout-option input {
+      position: absolute;
+      opacity: 0
+    }
+
+    .layout-option span {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 3px;
+      font-size: 10px;
+      color: var(--muted);
+      gap: 6px;
+      min-height: 90px
+    }
+
+    .layout-option input:checked+span {
+      border-color: #ffffff;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.06)
+    }
+
+    .layout-icon {
+      display: flex;
+      width: 24px;
+      height: 40px;
+      border: 1px solid currentColor;
+      border-radius: 3px;
+      padding: 3px;
+      flex-direction: column;
+      gap: 3px
+    }
+
+    .layout-icon i {
+      display: block;
+      background: currentColor;
+      opacity: .65;
+      flex: 1;
+      border-radius: 1px
+    }
+
+    .layout-icon.contained i:last-child {
+      flex: 0 0 12px;
+      margin: auto 0
+    }
+
+    .layout-icon.solo i {
+      flex: 1
+    }
+
+    .presets {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 10px
+    }
+
+    .presets button {
+      font-size: 11px;
+      padding: 5px;
+      min-height: 30px
+    }
+
+    .crop-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 8px
+    }
+
+    .crop-fields label {
+      font-size: 11px
+    }
+
+    .inspector .crop-fields input {
+      padding: 6px;
+      font-size: 11px
+    }
+
+    .inspector textarea {
+      min-height: 140px;
+      font: 11px/1.5 ui-monospace, monospace
+    }
+
+    .editor-footer {
+      padding: 12px 20px;
+      border-top: 1px solid var(--line);
+      background: #0d0d11;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px
+    }
+
+    .editor-footer small {
+      max-width: 500px
+    }
+
+    .editor-error {
+      padding: 0 20px;
+      background: #0d0d11
+    }
+
+    .editor-error p {
+      padding: 8px 0;
+      margin: 0
+    }
+
+    .loading-note {
+      color: #ffffff;
+      font-size: 12px
+    }
+
+    /* Settings Modal */
+    .settings-dialog {
+      width: min(440px, calc(100% - 32px));
+      padding: 0
+    }
+
+    .settings-head {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      background: #0d0d11
+    }
+
+    .settings-form {
+      padding: 18px
+    }
+
+    .key-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #555560;
+      display: inline-block;
+      margin-right: 2px
+    }
+
+    .key-dot.ready {
+      background: #ffffff;
+      box-shadow: 0 0 6px #ffffff
+    }
+
+    /* Toast Notification System */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+      max-width: min(380px, calc(100vw - 32px))
+    }
+
+    .toast {
+      pointer-events: auto;
+      background: #111115;
+      color: #ffffff;
+      border: 1px solid #3c3c45;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 13px;
+      line-height: 1.45;
+      animation: toastIn .22s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity .2s, transform .2s
+    }
+
+    .toast.hide {
+      opacity: 0;
+      transform: translateX(20px)
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(-12px) scale(.96)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1)
+      }
+    }
+
+    .toast-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px
+    }
+
+    .toast-content {
+      flex: 1;
+      min-width: 0
+    }
+
+    .toast-title {
+      font-weight: 700;
+      font-size: 13px;
+      color: #ffffff;
+      margin-bottom: 2px
+    }
+
+    .toast-body {
+      font-size: 12px;
+      color: #b0b0b8;
+      word-break: break-word
+    }
+
+    .toast-close {
+      background: none !important;
+      border: none !important;
+      color: #787882 !important;
+      padding: 0 !important;
+      min-height: auto !important;
+      font-size: 18px !important;
+      line-height: 1;
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-left: 4px
+    }
+
+    .toast-close:hover {
+      color: #ffffff !important
+    }
+
+    @media(max-width:1100px) {
+      .workspace {
+        grid-template-columns: 280px minmax(0, 1fr)
+      }
+
+      .editor-body {
+        grid-template-columns: minmax(0, 1fr) 280px
+      }
+
+      .topbar-note {
+        display: none
+      }
+    }
+
+    @media(max-width:800px) {
+      .topbar {
+        padding: 0 16px
+      }
+
+      .workspace {
+        grid-template-columns: 1fr
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line)
+      }
+
+      .editor-body {
+        grid-template-columns: 1fr
+      }
+
+      .inspector {
+        max-height: none;
+        border-left: 0;
+        border-top: 1px solid var(--line)
+      }
+    }
+  </style>
 </head>
 
 <body>
-<div id="toast-container" class="toast-container" role="region" aria-label="Notifikasi" aria-live="polite"></div>
+  <div id="toast-container" class="toast-container" role="region" aria-label="Notifikasi" aria-live="polite"></div>
 
 <header class="topbar">
   <div class="row">
@@ -212,1050 +1522,1107 @@ dialog::backdrop{background:rgba(0,0,0,0.88);backdrop-filter:blur(6px)}
       <h2>Import Video</h2>
       <p>Buat klip short dari video panjang.</p>
     </div>
-    <form id="new-job">
-      <label for="url">Link YouTube</label>
-      <input id="url" type="url" placeholder="https://youtube.com/watch?v=…">
-      
-      <details class="upload-option">
-        <summary>Upload File Lokal</summary>
-        <label for="video">File MP4 · Maks 1 GB</label>
-        <input id="video" type="file" accept="video/*">
-        <small class="muted" style="display:block;margin-top:4px">Upload membutuhkan subtitle SRT.</small>
-      </details>
-
-      <label for="srt">Subtitle SRT</label>
-      <input id="srt" type="file" accept=".srt">
-
-      <div class="formrow" style="margin-top:10px">
-        <div>
-          <label for="creator">Nama Kreator</label>
-          <input id="creator" maxlength="70" placeholder="Channel / Watermark">
-        </div>
-        <div>
-          <label for="count">Klip</label>
-          <select id="count">
-            <option>1</option><option>2</option><option>3</option><option>4</option><option selected>5</option>
-          </select>
-        </div>
-      </div>
-
-      <label for="lang">Bahasa Narasi</label>
-      <select id="lang">
-        <option value="id">Bahasa Indonesia</option>
-        <option value="en">English</option>
-      </select>
-
-      <div style="margin-top:14px">
-        <label class="check">
-          <input id="consent" type="checkbox" checked required>
-          <span>Izinkan pemrosesan AI lokal</span>
-        </label>
-      </div>
-
-      <button class="primary wide" id="generate" type="submit">⚡ Buat Klip Short</button>
-    </form>
-  </aside>
-
-  <!-- Library Content -->
-  <section class="library" aria-labelledby="workspace-title">
-    <div class="section-head">
-      <div>
-        <h1 id="workspace-title">Daftar Proyek</h1>
-        <p>Potong, edit layout, dan render video short Anda.</p>
-      </div>
-      <button class="quiet btn-sm" id="refresh" aria-label="Refresh daftar klip">↻ Refresh</button>
-    </div>
-    <div class="library-bar spread">
-      <strong>Total Klip <span id="clip-count" class="muted">/ 0</span></strong>
-      <span class="eyebrow">Studio Timeline · Trimmer · Export</span>
-    </div>
-    <div id="message" class="error" role="alert"></div>
-    <div id="jobs"></div>
-  </section>
-</main>
-
-<footer class="footer">
-  <span>CLIP / STUDIO · Pemrosesan Lokal</span>
-  <span>720 × 1280 · Non-Destructive</span>
-</footer>
-
-<!-- Settings Dialog (Navbar Top Right) -->
-<dialog id="settings-dialog" class="settings-dialog" aria-labelledby="settings-heading">
-  <div class="settings-head spread">
-    <h3 id="settings-heading" style="margin:0;font-size:15px">Pengaturan AI Model</h3>
-    <button type="button" class="quiet btn-sm" id="btn-close-settings" aria-label="Tutup">✕</button>
-  </div>
-  <form id="settings-form" class="settings-form">
-    <label for="api-key">API Key (Anthropic / 9Router)</label>
-    <input id="api-key" type="password" autocomplete="off" placeholder="Tersimpan aman di memori lokal">
-    <small class="muted" style="display:block;margin-top:4px">Key hanya berada di RAM lokal server saat berjalan.</small>
-
-    <label for="base-url" style="margin-top:12px">Base URL (Opsional)</label>
-    <input id="base-url" placeholder="http://localhost:20128 (kosong: Anthropic default)">
-
-    <label for="model" style="margin-top:12px">Model AI</label>
-    <input id="model" value="claude-fable-5-2" required>
-
-    <div class="spread" style="margin-top:18px">
-      <span id="key-status" class="muted" style="font-size:12px"></span>
-      <button class="primary" type="submit">Simpan</button>
-    </div>
-  </form>
-</dialog>
-
-<!-- CapCut-Style Editor Dialog -->
-<dialog id="editor" aria-labelledby="editor-title">
-  <div class="editor-head">
-    <div>
-      <div class="eyebrow" id="editor-context">Edit klip</div>
-      <h2 id="editor-title">Timeline Editor</h2>
-    </div>
     <div class="row">
-      <span class="status">Preview Sumber</span>
-      <button type="button" class="quiet btn-sm" id="close-editor" aria-label="Tutup editor">Tutup ✕</button>
+      <span class="status" id="connection" role="status">Menghubungkan…</span>
+      <button type="button" class="quiet btn-sm" id="btn-open-settings" aria-label="Pengaturan AI">
+        <span class="key-dot" id="key-dot"></span>
+        <span>⚙️ Pengaturan AI</span>
+      </button>
     </div>
-  </div>
-  <form id="edit-form">
-    <div class="editor-body">
-      <div class="monitor-column">
-        <div class="monitor-heading spread">
-          <strong style="font-size:12px">Preview Monitor</strong>
-          <small class="muted">Geser kotak untuk Facecam crop</small>
-        </div>
-        <div class="monitor-stage" id="monitor-stage">
-          <div id="crop-wrapper" class="crop-wrapper">
-            <video id="source-video" preload="metadata" playsinline aria-label="Preview video sumber"></video>
-            <div id="crop-box" class="crop-box" tabindex="0" role="group" aria-label="Area facecam">
-              <span class="crop-label">FACECAM</span>
-              <div class="crop-h" data-h="tl"></div>
-              <div class="crop-h" data-h="tr"></div>
-              <div class="crop-h" data-h="bl"></div>
-              <div class="crop-h" data-h="br"></div>
-            </div>
-          </div>
-        </div>
+  </header>
 
-        <div class="timeline-panel" style="margin-top:12px">
-          <div class="capcut-toolbar">
-            <div class="capcut-toolgroup">
-              <button type="button" class="btn-capcut" id="nudge-back-1s" title="Mundur 1 detik (Shift + ◀)" disabled>⏪ -1s</button>
-              <button type="button" class="btn-capcut" id="nudge-back-frame" title="Mundur 1 frame (◀)" disabled>◀ -0.05s</button>
-              <button type="button" class="btn-capcut primary" id="play-preview" disabled>▶ Putar</button>
-              <button type="button" class="btn-capcut" id="nudge-fwd-frame" title="Maju 1 frame (▶)" disabled>+0.05s ▶</button>
-              <button type="button" class="btn-capcut" id="nudge-fwd-1s" title="Maju 1 detik (Shift + ▶)" disabled>+1s ⏩</button>
-            </div>
-            <div class="capcut-toolgroup">
-              <button type="button" class="btn-capcut" id="set-in" title="Potong awal di posisi playhead ([)" disabled>[ Trim In</button>
-              <button type="button" class="btn-capcut" id="set-out" title="Potong akhir di posisi playhead (])" disabled>Trim Out ]</button>
-              <button type="button" class="btn-capcut btn-capcut-danger" id="toggle-cut" title="Potong / buang bagian di tengah video" disabled>✂️ Potong Tengah</button>
-              <button type="button" class="btn-capcut" id="reset-trim" title="Kembalikan durasi awal" disabled>↺ Reset</button>
-              <button type="button" class="btn-capcut" id="mute-preview" aria-pressed="false" disabled>Suara aktif</button>
-            </div>
-            <div class="capcut-time-display">
-              <output id="playhead-time" class="time">00:00.000</output>
-              <span class="time-sep">/</span>
-              <output id="trim-duration" class="duration-badge">— detik</output>
-            </div>
-          </div>
-
-          <p id="source-loading" class="loading-note" role="status">Memuat video sumber…</p>
-          <div class="timeline-ruler">
-            <span id="ruler-start">00:00</span>
-            <span id="ruler-mid">00:00</span>
-            <span id="ruler-end">00:00</span>
-          </div>
-
-          <!-- CapCut Track with Filmstrip, Audio Waveform & Handle Bar -->
-          <div id="timeline-track" class="timeline-track" role="slider" aria-label="Timeline Trimmer CapCut" tabindex="0">
-            <div id="timeline-filmstrip" class="timeline-filmstrip"></div>
-            <div id="timeline-waveform" class="timeline-waveform"></div>
-            <div id="timeline-dim-left" class="timeline-dim dim-left"></div>
-            <div id="timeline-dim-right" class="timeline-dim dim-right"></div>
-            <div id="timeline-selection" class="timeline-selection">
-              <div class="clip-header-badge">
-                <span id="clip-track-filename" class="clip-track-name">clip.mp4</span>
-                <span id="clip-track-duration" class="clip-track-dur">00:00.000</span>
-              </div>
-              <div class="capcut-handle handle-left" data-handle="left" title="Tarik untuk atur awal potongan (Trim In)"></div>
-              <div class="selection-body" title="Geser posisi klip (Slip Trimming)">
-                <span class="selection-label"></span>
-              </div>
-              <div class="capcut-handle handle-right" data-handle="right" title="Tarik untuk atur akhir potongan (Trim Out)"></div>
-            </div>
-            <div id="timeline-cut-zone" class="timeline-cut-zone" hidden>
-              <div class="cut-handle handle-cut-left" data-handle="cut-left" title="Tarik untuk atur batas awal bagian yang dibuang"></div>
-              <div class="cut-body" title="Geser posisi bagian yang dibuang">
-                <span class="cut-label">✂️ DIBUANG</span>
-              </div>
-              <div class="cut-handle handle-cut-right" data-handle="cut-right" title="Tarik untuk atur batas akhir bagian yang dibuang"></div>
-            </div>
-            <div id="timeline-playhead" class="timeline-playhead">
-              <div class="playhead-needle"></div>
-            </div>
-          </div>
-
-          <details style="margin-top:10px">
-            <summary style="font-size:11px;color:var(--muted);cursor:pointer">⚙️ Pengaturan Waktu Presisi & Cut Zone</summary>
-            <div class="trim-slider-row"><label for="trim-in">Mulai</label><input id="trim-in" type="range" min="0" max="1" step="0.01" value="0" disabled></div>
-            <div class="trim-slider-row"><label for="trim-out">Akhir</label><input id="trim-out" type="range" min="0" max="1" step="0.01" value="1" disabled></div>
-            <div class="time-fields">
-              <div><label for="edit-start">Waktu mulai</label><input id="edit-start" inputmode="decimal" placeholder="00:00.000" required disabled></div>
-              <div><label for="edit-end">Waktu akhir</label><input id="edit-end" inputmode="decimal" placeholder="00:30.000" required disabled></div>
-            </div>
-            <div id="cut-fields-group" style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)" hidden>
-              <div class="spread" style="margin-bottom:6px">
-                <strong style="font-size:11px;color:#ffffff">✂️ Bagian Tengah yang Dibuang</strong>
-                <button type="button" class="btn-capcut" id="remove-cut">Hapus potongan tengah</button>
-              </div>
-              <div class="time-fields">
-                <div><label for="edit-cut-start">Mulai buang <button type="button" id="set-cut-in">[ Playhead</button></label><input id="edit-cut-start" inputmode="decimal" placeholder="00:10.000"></div>
-                <div><label for="edit-cut-end">Selesai buang <button type="button" id="set-cut-out">Playhead ]</button></label><input id="edit-cut-end" inputmode="decimal" placeholder="00:15.000"></div>
-              </div>
-            </div>
-          </details>
-
-          <p id="trim-error" class="error" role="alert" style="margin-top:10px"></p>
-          <p class="timeline-note" id="source-bounds"></p>
-        </div>
+  <main class="workspace">
+    <!-- Sticky Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-heading">
+        <h2>Import Video</h2>
+        <p>Buat klip short dari video panjang.</p>
       </div>
+      <form id="new-job">
+        <label for="url">Link YouTube</label>
+        <input id="url" type="url" placeholder="https://youtube.com/watch?v=…">
 
-      <aside class="inspector" aria-label="Pengaturan klip">
-        <h3>Pengaturan Klip</h3>
-        <details open>
-          <summary>Layout Video (9:16)</summary>
-          <div class="layout-options" role="radiogroup" aria-label="Layout">
-            <label class="layout-option"><input name="layout" type="radio" value="split" checked><span><b class="layout-icon" aria-hidden="true"><i></i><i style="flex:2"></i></b>Split (Face+Game)</span></label>
-            <label class="layout-option"><input name="layout" type="radio" value="contained"><span><b class="layout-icon contained" aria-hidden="true"><i></i><i></i></b>Utuh (16:9)</span></label>
-            <label class="layout-option"><input name="layout" type="radio" value="no_face"><span><b class="layout-icon solo" aria-hidden="true"><i></i></b>Full Video</span></label>
+        <details class="upload-option">
+          <summary>Upload File Lokal</summary>
+          <label for="video">File MP4 · Maks 1 GB</label>
+          <input id="video" type="file" accept="video/*">
+          <small class="muted" style="display:block;margin-top:4px">Upload membutuhkan subtitle SRT.</small>
+        </details>
+
+        <label for="srt">Subtitle SRT</label>
+        <input id="srt" type="file" accept=".srt">
+
+        <div class="formrow" style="margin-top:10px">
+          <div>
+            <label for="creator">Nama Kreator</label>
+            <input id="creator" maxlength="70" placeholder="Channel / Watermark">
           </div>
-          <label for="edit-lang" style="margin-top:12px">Bahasa Suara & Subtitle</label>
-          <select id="edit-lang">
-            <option value="id">Bahasa Indonesia</option>
-            <option value="en">English</option>
-          </select>
-        </details>
-
-        <details open>
-          <summary>Crop Facecam</summary>
-          <label class="check" style="margin:8px 0"><input id="no-face" type="checkbox"><span>Tanpa Facecam</span></label>
-          <div class="presets">
-            <button type="button" data-crop="0,0.65,0.30,0.32">Kiri bawah</button>
-            <button type="button" data-crop="0.70,0.65,0.30,0.32">Kanan bawah</button>
-            <button type="button" data-crop="0,0,0.30,0.32">Kiri atas</button>
-            <button type="button" data-crop="0.70,0,0.30,0.32">Kanan atas</button>
+          <div>
+            <label for="count">Klip</label>
+            <select id="count">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option selected>5</option>
+            </select>
           </div>
-          <button type="button" class="quiet wide btn-sm" id="reset-crop" style="margin-top:8px">Reset Crop</button>
-          <details style="margin-top:8px">
-            <summary style="font-size:11px">Koordinat Presisi</summary>
-            <div class="crop-fields" style="margin-top:6px">
-              <div><label for="crop-x">Pos X</label><input id="crop-x" type="number" min="0" max="0.97" step="0.001"></div>
-              <div><label for="crop-y">Pos Y</label><input id="crop-y" type="number" min="0" max="0.97" step="0.001"></div>
-              <div><label for="crop-w">Lebar</label><input id="crop-w" type="number" min="0.03" max="1" step="0.001"></div>
-              <div><label for="crop-h">Tinggi</label><input id="crop-h" type="number" min="0.03" max="1" step="0.001"></div>
-            </div>
-          </details>
-        </details>
+        </div>
 
-        <details>
-          <summary>Teks, Judul & Narasi</summary>
-          <label for="edit-title">Judul Klip</label><input id="edit-title" maxlength="70" required>
-          <label for="edit-hook">Hook Pembuka</label><input id="edit-hook" maxlength="90" required>
-          <label for="edit-narration">Narasi Voiceover</label><input id="edit-narration" maxlength="180" required>
-          <label for="edit-creator">Nama Kreator</label><input id="edit-creator" maxlength="70" required>
-        </details>
+        <label for="lang">Bahasa Narasi</label>
+        <select id="lang">
+          <option value="id">Bahasa Indonesia</option>
+          <option value="en">English</option>
+        </select>
 
-        <details>
-          <summary>Subtitle & Zoom Reaksi</summary>
-          <label for="zoom-at">Zoom Reaksi (Detik)</label><input id="zoom-at" type="number" min="0" step="0.1" required>
-          <label for="edit-captions" style="margin-top:10px">Subtitle JSON</label>
-          <textarea id="edit-captions" spellcheck="false" required></textarea>
-        </details>
-      </aside>
+        <div style="margin-top:14px">
+          <label class="check">
+            <input id="consent" type="checkbox" checked required>
+            <span>Izinkan pemrosesan AI lokal</span>
+          </label>
+        </div>
+
+        <button class="primary wide" id="generate" type="submit">⚡ Buat Klip Short</button>
+      </form>
+    </aside>
+
+    <!-- Library Content -->
+    <section class="library" aria-labelledby="workspace-title">
+      <div class="section-head">
+        <div>
+          <h1 id="workspace-title">Daftar Proyek</h1>
+          <p>Potong, edit layout, dan render video short Anda.</p>
+        </div>
+        <button class="quiet btn-sm" id="refresh" aria-label="Refresh daftar klip">↻ Refresh</button>
+      </div>
+      <div class="library-bar spread">
+        <strong>Total Klip <span id="clip-count" class="muted">/ 0</span></strong>
+        <span class="eyebrow">Studio Timeline · Trimmer · Export</span>
+      </div>
+      <div id="message" class="error" role="alert"></div>
+      <div id="jobs"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>CLIP / STUDIO · Pemrosesan Lokal</span>
+    <span>720 × 1280 · Non-Destructive</span>
+  </footer>
+
+  <!-- Settings Dialog (Navbar Top Right) -->
+  <dialog id="settings-dialog" class="settings-dialog" aria-labelledby="settings-heading">
+    <div class="settings-head spread">
+      <h3 id="settings-heading" style="margin:0;font-size:15px">Pengaturan AI Model</h3>
+      <button type="button" class="quiet btn-sm" id="btn-close-settings" aria-label="Tutup">✕</button>
     </div>
+    <form id="settings-form" class="settings-form">
+      <label for="api-key">API Key (Anthropic / 9Router)</label>
+      <input id="api-key" type="password" autocomplete="off" placeholder="Tersimpan aman di memori lokal">
+      <small class="muted" style="display:block;margin-top:4px">Key hanya berada di RAM lokal server saat
+        berjalan.</small>
 
-    <div class="editor-error"><p id="edit-error" class="error" role="alert"></p></div>
-    <div class="editor-footer">
-      <small id="save-note" class="muted">Sumber video asli tidak akan tertimpa.</small>
+      <label for="base-url" style="margin-top:12px">Base URL (Opsional)</label>
+      <input id="base-url" placeholder="http://localhost:20128 (kosong: Anthropic default)">
+
+      <label for="model" style="margin-top:12px">Model AI</label>
+      <input id="model" value="claude-fable-5-2" required>
+
+      <div class="spread" style="margin-top:18px">
+        <span id="key-status" class="muted" style="font-size:12px"></span>
+        <button class="primary" type="submit">Simpan</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- CapCut-Style Editor Dialog -->
+  <dialog id="editor" aria-labelledby="editor-title">
+    <div class="editor-head">
+      <div>
+        <div class="eyebrow" id="editor-context">Edit klip</div>
+        <h2 id="editor-title">Timeline Editor</h2>
+      </div>
       <div class="row">
-        <button type="button" class="quiet" id="cancel-editor">Batal</button>
-        <button class="primary" id="rerender" type="submit" disabled>Simpan & Render ↗</button>
+        <span class="status">Preview Sumber</span>
+        <button type="button" class="quiet btn-sm" id="close-editor" aria-label="Tutup editor">Tutup ✕</button>
       </div>
     </div>
-  </form>
-</dialog>
+    <form id="edit-form">
+      <div class="editor-body">
+        <div class="monitor-column">
+          <div class="monitor-heading spread">
+            <strong style="font-size:12px">Preview Monitor</strong>
+            <small class="muted">Geser kotak untuk Facecam crop</small>
+          </div>
+          <div class="monitor-stage" id="monitor-stage">
+            <div id="crop-wrapper" class="crop-wrapper">
+              <video id="source-video" preload="metadata" playsinline aria-label="Preview video sumber"></video>
+              <div id="crop-box" class="crop-box" tabindex="0" role="group" aria-label="Area facecam">
+                <span class="crop-label">FACECAM</span>
+                <div class="crop-h" data-h="tl"></div>
+                <div class="crop-h" data-h="tr"></div>
+                <div class="crop-h" data-h="bl"></div>
+                <div class="crop-h" data-h="br"></div>
+              </div>
+            </div>
+          </div>
 
-<script>
-const $ = id => document.getElementById(id);
-let token = '', jobs = [], current = null, last = '', timer, active = false, dirty = false, saving = false;
-const stages = { queued: 'Antrean', fetching: 'Mengunduh', analyzing: 'Menganalisis', rendering: 'Merender', done: 'Selesai', partial: 'Selesai sebagian', error: 'Gagal', interrupted: 'Terhenti', preparing: 'Memeriksa' };
+          <div class="timeline-panel" style="margin-top:12px">
+            <div class="capcut-toolbar">
+              <div class="capcut-toolgroup">
+                <button type="button" class="btn-capcut" id="nudge-back-1s" title="Mundur 1 detik (Shift + ◀)"
+                  disabled>⏪ -1s</button>
+                <button type="button" class="btn-capcut" id="nudge-back-frame" title="Mundur 1 frame (◀)" disabled>◀
+                  -0.05s</button>
+                <button type="button" class="btn-capcut primary" id="play-preview" disabled>▶ Putar</button>
+                <button type="button" class="btn-capcut" id="nudge-fwd-frame" title="Maju 1 frame (▶)" disabled>+0.05s
+                  ▶</button>
+                <button type="button" class="btn-capcut" id="nudge-fwd-1s" title="Maju 1 detik (Shift + ▶)" disabled>+1s
+                  ⏩</button>
+              </div>
+              <div class="capcut-toolgroup">
+                <button type="button" class="btn-capcut" id="set-in" title="Potong awal di posisi playhead ([)"
+                  disabled>[ Trim In</button>
+                <button type="button" class="btn-capcut" id="set-out" title="Potong akhir di posisi playhead (])"
+                  disabled>Trim Out ]</button>
+                <button type="button" class="btn-capcut btn-capcut-danger" id="toggle-cut"
+                  title="Potong / buang bagian di tengah video" disabled>✂️ Potong Tengah</button>
+                <button type="button" class="btn-capcut" id="reset-trim" title="Kembalikan durasi awal" disabled>↺
+                  Reset</button>
+                <button type="button" class="btn-capcut" id="mute-preview" aria-pressed="false" disabled>Suara
+                  aktif</button>
+              </div>
+              <div class="capcut-time-display">
+                <output id="playhead-time" class="time">00:00.000</output>
+                <span class="time-sep">/</span>
+                <output id="trim-duration" class="duration-badge">— detik</output>
+              </div>
+            </div>
 
-// TIMING_HELPERS_START
-function parseTime(value) {
-  const text = String(value).trim();
-  if (!/^\d+(?::\d{1,2}){0,2}(?:\.\d{1,3})?$/.test(text)) return NaN;
-  const parts = text.split(':').map(Number);
-  if (parts.slice(1).some(n => n >= 60)) return NaN;
-  return parts.reduce((total, n) => total * 60 + n, 0);
-}
-function timecode(seconds) {
-  const ms = Math.round(Math.max(0, seconds || 0) * 1000), s = Math.floor(ms / 1000), h = Math.floor(s / 3600);
-  return (h ? String(h).padStart(2, '0') + ':' : '') + String(Math.floor(s / 60) % 60).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0') + '.' + String(ms % 1000).padStart(3, '0');
-}
-function rangeError(start, end, min, max, cutStart, cutEnd) {
-  if (![start, end, min, max].every(Number.isFinite)) return 'Isi waktu yang valid, misalnya 00:15.000.';
-  if (start < min || end > max) return 'Waktu berada di luar batas video sumber.';
-  if (end <= start) return 'Waktu akhir harus lebih besar dari waktu mulai.';
-  let effective = end - start;
-  const hasCut = cutStart !== null && cutStart !== undefined && cutEnd !== null && cutEnd !== undefined;
-  if (hasCut) {
-    if (![cutStart, cutEnd].every(Number.isFinite)) return 'Waktu potong tengah tidak valid.';
-    if (cutStart <= start || cutEnd >= end) return 'Potongan tengah harus berada di dalam rentang klip.';
-    if (cutEnd <= cutStart) return 'Batas akhir potongan tengah harus lebih besar dari batas mulai.';
-    if ((cutStart - start) < 0.2 || (end - cutEnd) < 0.2) return 'Bagian sebelum dan sesudah potongan tengah minimal 0.2 detik.';
-    effective = (cutStart - start) + (end - cutEnd);
-  }
-  if (effective < 1 - 1e-6 || effective > 60 + 1e-6) return 'Durasi bersih klip harus 1–60 detik.';
-  return '';
-}
-function retimeCaptions(captions, oldStart, start, end, cutStart, cutEnd) {
-  const hasCut = cutStart !== null && cutStart !== undefined && cutEnd !== null && cutEnd !== undefined && cutEnd > cutStart;
-  const cutDur = hasCut ? cutEnd - cutStart : 0;
-  const effectiveDur = hasCut ? (cutStart - start) + (end - cutEnd) : (end - start);
+            <p id="source-loading" class="loading-note" role="status">Memuat video sumber…</p>
+            <div class="timeline-ruler">
+              <span id="ruler-start">00:00</span>
+              <span id="ruler-mid">00:00</span>
+              <span id="ruler-end">00:00</span>
+            </div>
 
-  return captions.map(c => {
-    const absS = c.start + oldStart, absE = c.end + oldStart;
-    if (absE <= start || absS >= end) return null;
-    if (!hasCut) {
-      const s = Math.max(0, Math.round((absS - start) * 1000) / 1000);
-      const e = Math.min(effectiveDur, Math.round((absE - start) * 1000) / 1000);
-      return e > s ? { ...c, start: s, end: e } : null;
+            <!-- CapCut Track with Filmstrip, Audio Waveform & Handle Bar -->
+            <div id="timeline-track" class="timeline-track" role="slider" aria-label="Timeline Trimmer CapCut"
+              tabindex="0">
+              <div id="timeline-filmstrip" class="timeline-filmstrip"></div>
+              <div id="timeline-waveform" class="timeline-waveform"></div>
+              <div id="timeline-dim-left" class="timeline-dim dim-left"></div>
+              <div id="timeline-dim-right" class="timeline-dim dim-right"></div>
+              <div id="timeline-selection" class="timeline-selection">
+                <div class="clip-header-badge">
+                  <span id="clip-track-filename" class="clip-track-name">clip.mp4</span>
+                  <span id="clip-track-duration" class="clip-track-dur">00:00.000</span>
+                </div>
+                <div class="capcut-handle handle-left" data-handle="left"
+                  title="Tarik untuk atur awal potongan (Trim In)"></div>
+                <div class="selection-body" title="Geser posisi klip (Slip Trimming)">
+                  <span class="selection-label"></span>
+                </div>
+                <div class="capcut-handle handle-right" data-handle="right"
+                  title="Tarik untuk atur akhir potongan (Trim Out)"></div>
+              </div>
+              <div id="timeline-cut-zone" class="timeline-cut-zone" hidden>
+                <div class="cut-handle handle-cut-left" data-handle="cut-left"
+                  title="Tarik untuk atur batas awal bagian yang dibuang"></div>
+                <div class="cut-body" title="Geser posisi bagian yang dibuang">
+                  <span class="cut-label">✂️ DIBUANG</span>
+                </div>
+                <div class="cut-handle handle-cut-right" data-handle="cut-right"
+                  title="Tarik untuk atur batas akhir bagian yang dibuang"></div>
+              </div>
+              <div id="timeline-playhead" class="timeline-playhead">
+                <div class="playhead-needle"></div>
+              </div>
+            </div>
+
+            <details style="margin-top:10px">
+              <summary style="font-size:11px;color:var(--muted);cursor:pointer">⚙️ Pengaturan Waktu Presisi & Cut Zone
+              </summary>
+              <div class="trim-slider-row"><label for="trim-in">Mulai</label><input id="trim-in" type="range" min="0"
+                  max="1" step="0.01" value="0" disabled></div>
+              <div class="trim-slider-row"><label for="trim-out">Akhir</label><input id="trim-out" type="range" min="0"
+                  max="1" step="0.01" value="1" disabled></div>
+              <div class="time-fields">
+                <div><label for="edit-start">Waktu mulai</label><input id="edit-start" inputmode="decimal"
+                    placeholder="00:00.000" required disabled></div>
+                <div><label for="edit-end">Waktu akhir</label><input id="edit-end" inputmode="decimal"
+                    placeholder="00:30.000" required disabled></div>
+              </div>
+              <div id="cut-fields-group" style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)"
+                hidden>
+                <div class="spread" style="margin-bottom:6px">
+                  <strong style="font-size:11px;color:#ffffff">✂️ Bagian Tengah yang Dibuang</strong>
+                  <button type="button" class="btn-capcut" id="remove-cut">Hapus potongan tengah</button>
+                </div>
+                <div class="time-fields">
+                  <div><label for="edit-cut-start">Mulai buang <button type="button" id="set-cut-in">[
+                        Playhead</button></label><input id="edit-cut-start" inputmode="decimal" placeholder="00:10.000">
+                  </div>
+                  <div><label for="edit-cut-end">Selesai buang <button type="button" id="set-cut-out">Playhead
+                        ]</button></label><input id="edit-cut-end" inputmode="decimal" placeholder="00:15.000"></div>
+                </div>
+              </div>
+            </details>
+
+            <p id="trim-error" class="error" role="alert" style="margin-top:10px"></p>
+            <p class="timeline-note" id="source-bounds"></p>
+          </div>
+        </div>
+
+        <aside class="inspector" aria-label="Pengaturan klip">
+          <h3>Pengaturan Klip</h3>
+          <details open>
+            <summary>Layout Video (9:16)</summary>
+            <div class="layout-options" role="radiogroup" aria-label="Layout">
+              <label class="layout-option"><input name="layout" type="radio" value="split" checked><span><b
+                    class="layout-icon" aria-hidden="true"><i></i><i style="flex:2"></i></b>Split
+                  (Face+Game)</span></label>
+              <label class="layout-option"><input name="layout" type="radio" value="contained"><span><b
+                    class="layout-icon contained" aria-hidden="true"><i></i><i></i></b>Utuh (16:9)</span></label>
+              <label class="layout-option"><input name="layout" type="radio" value="no_face"><span><b
+                    class="layout-icon solo" aria-hidden="true"><i></i></b>Full Video</span></label>
+            </div>
+            <label for="edit-lang" style="margin-top:12px">Bahasa Suara & Subtitle</label>
+            <select id="edit-lang">
+              <option value="id">Bahasa Indonesia</option>
+              <option value="en">English</option>
+            </select>
+          </details>
+
+          <details open>
+            <summary>Crop Facecam</summary>
+            <label class="check" style="margin:8px 0"><input id="no-face" type="checkbox"><span>Tanpa
+                Facecam</span></label>
+            <div class="presets">
+              <button type="button" data-crop="0,0.65,0.30,0.32">Kiri bawah</button>
+              <button type="button" data-crop="0.70,0.65,0.30,0.32">Kanan bawah</button>
+              <button type="button" data-crop="0,0,0.30,0.32">Kiri atas</button>
+              <button type="button" data-crop="0.70,0,0.30,0.32">Kanan atas</button>
+            </div>
+            <button type="button" class="quiet wide btn-sm" id="reset-crop" style="margin-top:8px">Reset Crop</button>
+            <details style="margin-top:8px">
+              <summary style="font-size:11px">Koordinat Presisi</summary>
+              <div class="crop-fields" style="margin-top:6px">
+                <div><label for="crop-x">Pos X</label><input id="crop-x" type="number" min="0" max="0.97" step="0.001">
+                </div>
+                <div><label for="crop-y">Pos Y</label><input id="crop-y" type="number" min="0" max="0.97" step="0.001">
+                </div>
+                <div><label for="crop-w">Lebar</label><input id="crop-w" type="number" min="0.03" max="1" step="0.001">
+                </div>
+                <div><label for="crop-h">Tinggi</label><input id="crop-h" type="number" min="0.03" max="1" step="0.001">
+                </div>
+              </div>
+            </details>
+          </details>
+
+          <details>
+            <summary>Teks, Judul & Narasi</summary>
+            <label for="edit-title">Judul Klip</label><input id="edit-title" maxlength="70" required>
+            <label for="edit-hook">Hook Pembuka</label><input id="edit-hook" maxlength="90" required>
+            <label for="edit-narration">Narasi Voiceover</label><input id="edit-narration" maxlength="180" required>
+            <label for="edit-creator">Nama Kreator</label><input id="edit-creator" maxlength="70" required>
+          </details>
+
+          <details>
+            <summary>Subtitle & Zoom Reaksi</summary>
+            <label for="zoom-at">Zoom Reaksi (Detik)</label><input id="zoom-at" type="number" min="0" step="0.1"
+              required>
+            <label for="edit-captions" style="margin-top:10px">Subtitle JSON</label>
+            <textarea id="edit-captions" spellcheck="false" required></textarea>
+          </details>
+        </aside>
+      </div>
+
+      <div class="editor-error">
+        <p id="edit-error" class="error" role="alert"></p>
+      </div>
+      <div class="editor-footer">
+        <small id="save-note" class="muted">Sumber video asli tidak akan tertimpa.</small>
+        <div class="row">
+          <button type="button" class="quiet" id="cancel-editor">Batal</button>
+          <button class="primary" id="rerender" type="submit" disabled>Simpan & Render ↗</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    let token = '', jobs = [], current = null, last = '', timer, active = false, dirty = false, saving = false;
+    const stages = { queued: 'Antrean', fetching: 'Mengunduh', analyzing: 'Menganalisis', rendering: 'Merender', done: 'Selesai', partial: 'Selesai sebagian', error: 'Gagal', interrupted: 'Terhenti', preparing: 'Memeriksa' };
+
+    // TIMING_HELPERS_START
+    function parseTime(value) {
+      const text = String(value).trim();
+      if (!/^\d+(?::\d{1,2}){0,2}(?:\.\d{1,3})?$/.test(text)) return NaN;
+      const parts = text.split(':').map(Number);
+      if (parts.slice(1).some(n => n >= 60)) return NaN;
+      return parts.reduce((total, n) => total * 60 + n, 0);
     }
-    if (absS >= cutStart && absE <= cutEnd) return null;
-    if (absE <= cutStart) {
-      const s = Math.max(0, Math.round((absS - start) * 1000) / 1000);
-      const e = Math.min(cutStart - start, Math.round((absE - start) * 1000) / 1000);
-      return e > s ? { ...c, start: s, end: e } : null;
+    function timecode(seconds) {
+      const ms = Math.round(Math.max(0, seconds || 0) * 1000), s = Math.floor(ms / 1000), h = Math.floor(s / 3600);
+      return (h ? String(h).padStart(2, '0') + ':' : '') + String(Math.floor(s / 60) % 60).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0') + '.' + String(ms % 1000).padStart(3, '0');
     }
-    if (absS >= cutEnd) {
-      const s = Math.max(cutStart - start, Math.round((absS - start - cutDur) * 1000) / 1000);
-      const e = Math.min(effectiveDur, Math.round((absE - start - cutDur) * 1000) / 1000);
-      return e > s ? { ...c, start: s, end: e } : null;
+    function rangeError(start, end, min, max, cutStart, cutEnd) {
+      if (![start, end, min, max].every(Number.isFinite)) return 'Isi waktu yang valid, misalnya 00:15.000.';
+      if (start < min || end > max) return 'Waktu berada di luar batas video sumber.';
+      if (end <= start) return 'Waktu akhir harus lebih besar dari waktu mulai.';
+      let effective = end - start;
+      const hasCut = cutStart !== null && cutStart !== undefined && cutEnd !== null && cutEnd !== undefined;
+      if (hasCut) {
+        if (![cutStart, cutEnd].every(Number.isFinite)) return 'Waktu potong tengah tidak valid.';
+        if (cutStart <= start || cutEnd >= end) return 'Potongan tengah harus berada di dalam rentang klip.';
+        if (cutEnd <= cutStart) return 'Batas akhir potongan tengah harus lebih besar dari batas mulai.';
+        if ((cutStart - start) < 0.2 || (end - cutEnd) < 0.2) return 'Bagian sebelum dan sesudah potongan tengah minimal 0.2 detik.';
+        effective = (cutStart - start) + (end - cutEnd);
+      }
+      if (effective < 1 - 1e-6 || effective > 60 + 1e-6) return 'Durasi bersih klip harus 1–60 detik.';
+      return '';
     }
-    if (absS < cutStart) {
-      const s = Math.max(0, Math.round((absS - start) * 1000) / 1000);
-      const e = Math.min(cutStart - start, Math.round((cutStart - start) * 1000) / 1000);
-      return e > s ? { ...c, start: s, end: e } : null;
+    function retimeCaptions(captions, oldStart, start, end, cutStart, cutEnd) {
+      const hasCut = cutStart !== null && cutStart !== undefined && cutEnd !== null && cutEnd !== undefined && cutEnd > cutStart;
+      const cutDur = hasCut ? cutEnd - cutStart : 0;
+      const effectiveDur = hasCut ? (cutStart - start) + (end - cutEnd) : (end - start);
+
+      return captions.map(c => {
+        const absS = c.start + oldStart, absE = c.end + oldStart;
+        if (absE <= start || absS >= end) return null;
+        if (!hasCut) {
+          const s = Math.max(0, Math.round((absS - start) * 1000) / 1000);
+          const e = Math.min(effectiveDur, Math.round((absE - start) * 1000) / 1000);
+          return e > s ? { ...c, start: s, end: e } : null;
+        }
+        if (absS >= cutStart && absE <= cutEnd) return null;
+        if (absE <= cutStart) {
+          const s = Math.max(0, Math.round((absS - start) * 1000) / 1000);
+          const e = Math.min(cutStart - start, Math.round((absE - start) * 1000) / 1000);
+          return e > s ? { ...c, start: s, end: e } : null;
+        }
+        if (absS >= cutEnd) {
+          const s = Math.max(cutStart - start, Math.round((absS - start - cutDur) * 1000) / 1000);
+          const e = Math.min(effectiveDur, Math.round((absE - start - cutDur) * 1000) / 1000);
+          return e > s ? { ...c, start: s, end: e } : null;
+        }
+        if (absS < cutStart) {
+          const s = Math.max(0, Math.round((absS - start) * 1000) / 1000);
+          const e = Math.min(cutStart - start, Math.round((cutStart - start) * 1000) / 1000);
+          return e > s ? { ...c, start: s, end: e } : null;
+        }
+        if (absE > cutEnd) {
+          const s = Math.max(cutStart - start, Math.round((cutEnd - start - cutDur) * 1000) / 1000);
+          const e = Math.min(effectiveDur, Math.round((absE - start - cutDur) * 1000) / 1000);
+          return e > s ? { ...c, start: s, end: e } : null;
+        }
+        return null;
+      }).filter(Boolean);
     }
-    if (absE > cutEnd) {
-      const s = Math.max(cutStart - start, Math.round((cutEnd - start - cutDur) * 1000) / 1000);
-      const e = Math.min(effectiveDur, Math.round((absE - start - cutDur) * 1000) / 1000);
-      return e > s ? { ...c, start: s, end: e } : null;
+    // TIMING_HELPERS_END
+
+    function el(tag, text, cls) {
+      const n = document.createElement(tag);
+      if (text !== undefined) n.textContent = text;
+      if (cls) n.className = cls;
+      return n;
     }
-    return null;
-  }).filter(Boolean);
-}
-// TIMING_HELPERS_END
+    function message(text) { $('message').textContent = text || ''; }
+    async function request(path, options = {}) {
+      options.headers = { ...(options.headers || {}), 'X-Local-Token': token };
+      const r = await fetch(path, options);
+      let d;
+      try { d = await r.json(); } catch { throw Error('Server mengembalikan respons tidak valid.'); }
+      if (!r.ok) throw Error(typeof d.detail === 'string' ? d.detail : JSON.stringify(d.detail || d));
+      return d;
+    }
+    function media(job, path) { return '/media/' + encodeURIComponent(job.id) + '/' + path.split('/').map(encodeURIComponent).join('/'); }
+    function stamp(t) { return timecode(t).split('.')[0]; }
+    function link(label, url, download = false) {
+      const a = el('a', label, 'button btn-sm');
+      a.href = url;
+      if (download) a.download = '';
+      return a;
+    }
 
-function el(tag, text, cls) {
-  const n = document.createElement(tag);
-  if (text !== undefined) n.textContent = text;
-  if (cls) n.className = cls;
-  return n;
-}
-function message(text) { $('message').textContent = text || ''; }
-async function request(path, options = {}) {
-  options.headers = { ...(options.headers || {}), 'X-Local-Token': token };
-  const r = await fetch(path, options);
-  let d;
-  try { d = await r.json(); } catch { throw Error('Server mengembalikan respons tidak valid.'); }
-  if (!r.ok) throw Error(typeof d.detail === 'string' ? d.detail : JSON.stringify(d.detail || d));
-  return d;
-}
-function media(job, path) { return '/media/' + encodeURIComponent(job.id) + '/' + path.split('/').map(encodeURIComponent).join('/'); }
-function stamp(t) { return timecode(t).split('.')[0]; }
-function link(label, url, download = false) {
-  const a = el('a', label, 'button btn-sm');
-  a.href = url;
-  if (download) a.download = '';
-  return a;
-}
-
-const prevJobStages = new Map(), prevClipStatus = new Map();
-function notify(title, messageText, icon = 'ℹ️', duration = 4500) {
-  const container = $('toast-container');
-  if (!container) return;
-  const t = el('div', undefined, 'toast'), ic = el('span', icon, 'toast-icon'), cnt = el('div', undefined, 'toast-content');
-  cnt.append(el('div', title, 'toast-title'), el('div', messageText, 'toast-body'));
-  const btn = el('button', '×', 'toast-close');
-  btn.setAttribute('aria-label', 'Tutup');
-  btn.onclick = () => { t.classList.add('hide'); setTimeout(() => t.remove(), 220); };
-  t.append(ic, cnt, btn);
-  container.prepend(t);
-  if (duration > 0) { setTimeout(() => { if (t.parentElement) { t.classList.add('hide'); setTimeout(() => t.remove(), 220); } }, duration); }
-  if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-    try { new Notification(title, { body: messageText }); } catch (_) {}
-  }
-}
-if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
-  document.addEventListener('click', () => {
-    if (Notification.permission === 'default') { try { Notification.requestPermission(); } catch (_) {} }
-  }, { once: true });
-}
-
-// Full CRUD UI Rendering
-function renderJobs() {
-  const root = $('jobs');
-  root.replaceChildren();
-  const totalClips = jobs.reduce((n, j) => n + (j.clips || []).length, 0);
-  $('clip-count').textContent = '/ ' + totalClips;
-
-  if (!jobs.length) {
-    const empty = el('div', undefined, 'empty');
-    empty.append(
-      el('div', '▷', 'empty-reel'),
-      el('h3', 'Belum Ada Proyek'),
-      el('p', 'Masukkan link YouTube atau upload video di sidebar untuk mulai membuat klip short.')
-    );
-    root.append(empty);
-    return;
-  }
-
-  for (const job of jobs) {
-    const section = el('article', undefined, 'job');
-    const head = el('div', undefined, 'job-head');
-    const titleRow = el('div', undefined, 'job-title-row');
-
-    const h3 = el('h3', job.title || 'Proyek Video');
-    const statusBadge = el('span', stages[job.stage] || job.stage, 'status');
-    titleRow.append(h3, statusBadge);
-
-    // Job CRUD buttons (Rename, Add Clip, Delete Project, Download ZIP)
-    const jobActions = el('div', undefined, 'row');
-
-    const renameBtn = el('button', '✎ Ganti Nama', 'quiet btn-sm');
-    renameBtn.title = 'Ubah nama proyek';
-    renameBtn.onclick = async () => {
-      const newTitle = prompt('Nama baru proyek:', job.title || '');
-      if (newTitle && newTitle.trim()) {
-        try {
-          await request(`/api/jobs/${job.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: newTitle.trim() }) });
-          notify('Judul Diperbarui', 'Nama proyek berhasil diperbarui.', '✏️');
-          await refresh();
-        } catch (err) { alert(err.message); }
+    const prevJobStages = new Map(), prevClipStatus = new Map();
+    function notify(title, messageText, icon = 'ℹ️', duration = 4500) {
+      const container = $('toast-container');
+      if (!container) return;
+      const t = el('div', undefined, 'toast'), ic = el('span', icon, 'toast-icon'), cnt = el('div', undefined, 'toast-content');
+      cnt.append(el('div', title, 'toast-title'), el('div', messageText, 'toast-body'));
+      const btn = el('button', '×', 'toast-close');
+      btn.setAttribute('aria-label', 'Tutup');
+      btn.onclick = () => { t.classList.add('hide'); setTimeout(() => t.remove(), 220); };
+      t.append(ic, cnt, btn);
+      container.prepend(t);
+      if (duration > 0) { setTimeout(() => { if (t.parentElement) { t.classList.add('hide'); setTimeout(() => t.remove(), 220); } }, duration); }
+      if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+        try { new Notification(title, { body: messageText }); } catch (_) { }
       }
-    };
+    }
+    if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+      document.addEventListener('click', () => {
+        if (Notification.permission === 'default') { try { Notification.requestPermission(); } catch (_) { } }
+      }, { once: true });
+    }
 
-    const addClipBtn = el('button', '+ Tambah Klip', 'quiet btn-sm');
-    addClipBtn.title = 'Buat potongan klip baru dari video ini';
-    addClipBtn.onclick = async () => {
-      try {
-        const res = await request(`/api/jobs/${job.id}/clips`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: `Klip ${(job.clips || []).length + 1}` }) });
-        notify('Klip Ditambahkan', 'Klip baru berhasil dibuat.', '➕');
-        await refresh();
-        if (res.index !== undefined) openEditor(res.job, res.index);
-      } catch (err) { alert(err.message); }
-    };
+    // Full CRUD UI Rendering
+    function renderJobs() {
+      const root = $('jobs');
+      root.replaceChildren();
+      const totalClips = jobs.reduce((n, j) => n + (j.clips || []).length, 0);
+      $('clip-count').textContent = '/ ' + totalClips;
 
-    const delJobBtn = el('button', '🗑 Hapus', 'btn-danger btn-sm');
-    delJobBtn.title = 'Hapus proyek dan seluruh klip di dalamnya';
-    delJobBtn.onclick = async () => {
-      if (confirm(`Hapus proyek "${job.title || 'ini'}" dan seluruh hasil rendernya?`)) {
-        try {
-          await request(`/api/jobs/${job.id}`, { method: 'DELETE' });
-          notify('Proyek Dihapus', `Proyek "${job.title || ''}" telah dihapus.`, '🗑️');
-          await refresh();
-        } catch (err) { alert(err.message); }
-      }
-    };
-
-    jobActions.append(renameBtn, addClipBtn);
-    if (job.zip) jobActions.append(link('↓ ZIP', media(job, job.zip), true));
-    jobActions.append(delJobBtn);
-
-    head.append(titleRow, jobActions);
-    section.append(head);
-
-    if (job.error) section.append(el('p', job.error, 'error'));
-
-    const cards = el('div', undefined, 'cards');
-    (job.clips || []).forEach((clip, i) => {
-      const card = el('article', undefined, 'card');
-      const preview = el('div', undefined, 'card-preview');
-
-      if (clip.file) {
-        const vid = el('video');
-        vid.controls = true; vid.preload = 'metadata'; vid.playsInline = true;
-        vid.src = media(job, clip.file);
-        if (clip.poster) vid.poster = media(job, clip.poster);
-        preview.append(vid);
-      } else if (clip.poster) {
-        const img = el('img');
-        img.src = media(job, clip.poster);
-        img.alt = 'Thumbnail ' + (i + 1);
-        preview.append(img);
-      } else {
-        const placeholder = el('div', undefined, 'empty-reel');
-        preview.append(placeholder);
+      if (!jobs.length) {
+        const empty = el('div', undefined, 'empty');
+        empty.append(
+          el('div', '▷', 'empty-reel'),
+          el('h3', 'Belum Ada Proyek'),
+          el('p', 'Masukkan link YouTube atau upload video di sidebar untuk mulai membuat klip short.')
+        );
+        root.append(empty);
+        return;
       }
 
-      preview.append(el('span', 'KLIP ' + String(i + 1).padStart(2, '0'), 'clip-number'));
-      if (clip.duration) preview.append(el('span', `${Math.round(clip.duration)}s`, 'clip-duration-badge'));
-      card.append(preview);
+      for (const job of jobs) {
+        const section = el('article', undefined, 'job');
+        const head = el('div', undefined, 'job-head');
+        const titleRow = el('div', undefined, 'job-title-row');
 
-      const body = el('div', undefined, 'card-body');
-      const info = el('div');
-      info.append(
-        el('span', `${stamp(clip.start)} — ${stamp(clip.end)}`, 'time muted'),
-        el('h4', clip.title || `Klip ${i + 1}`),
-        el('small', stages[clip.status] || clip.status, 'muted')
-      );
-      body.append(info);
+        const h3 = el('h3', job.title || 'Proyek Video');
+        const statusBadge = el('span', stages[job.stage] || job.stage, 'status');
+        titleRow.append(h3, statusBadge);
 
-      // Clip CRUD Action Buttons
-      const actions = el('div', undefined, 'card-actions');
-      if (clip.source_file) {
-        const editBtn = el('button', 'Edit & Potong', 'primary btn-sm');
-        editBtn.disabled = active;
-        editBtn.onclick = () => openEditor(job, i);
-        actions.append(editBtn);
-      }
+        // Job CRUD buttons (Rename, Add Clip, Delete Project, Download ZIP)
+        const jobActions = el('div', undefined, 'row');
 
-      const dupBtn = el('button', '⎘ Duplikat', 'quiet btn-sm');
-      dupBtn.title = 'Duplikat klip ini untuk variasi trim';
-      dupBtn.onclick = async () => {
-        try {
-          await request(`/api/jobs/${job.id}/clips`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ copy_from: i, title: `${clip.title || 'Klip'} (Salinan)` }) });
-          notify('Klip Diduplikasi', 'Salinan klip siap diedit.', '⎘');
-          await refresh();
-        } catch (err) { alert(err.message); }
-      };
-      actions.append(dupBtn);
+        const renameBtn = el('button', '✎ Ganti Nama', 'quiet btn-sm');
+        renameBtn.title = 'Ubah nama proyek';
+        renameBtn.onclick = async () => {
+          const newTitle = prompt('Nama baru proyek:', job.title || '');
+          if (newTitle && newTitle.trim()) {
+            try {
+              await request(`/api/jobs/${job.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: newTitle.trim() }) });
+              notify('Judul Diperbarui', 'Nama proyek berhasil diperbarui.', '✏️');
+              await refresh();
+            } catch (err) { alert(err.message); }
+          }
+        };
 
-      if (clip.file) {
-        actions.append(link('↓ MP4', media(job, clip.file), true));
-      }
-
-      const delClipBtn = el('button', '✕', 'btn-danger btn-sm');
-      delClipBtn.title = 'Hapus klip ini';
-      delClipBtn.onclick = async () => {
-        if (confirm(`Hapus "${clip.title || 'klip ini'}"?`)) {
+        const addClipBtn = el('button', '+ Tambah Klip', 'quiet btn-sm');
+        addClipBtn.title = 'Buat potongan klip baru dari video ini';
+        addClipBtn.onclick = async () => {
           try {
-            await request(`/api/jobs/${job.id}/clips/${i}`, { method: 'DELETE' });
-            notify('Klip Dihapus', 'Klip telah dihapus dari daftar.', '🗑️');
+            const res = await request(`/api/jobs/${job.id}/clips`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: `Klip ${(job.clips || []).length + 1}` }) });
+            notify('Klip Ditambahkan', 'Klip baru berhasil dibuat.', '➕');
             await refresh();
+            if (res.index !== undefined) openEditor(res.job, res.index);
           } catch (err) { alert(err.message); }
-        }
-      };
-      actions.append(delClipBtn);
+        };
 
-      body.append(actions);
-      card.append(body);
-      cards.append(card);
-    });
+        const delJobBtn = el('button', '🗑 Hapus', 'btn-danger btn-sm');
+        delJobBtn.title = 'Hapus proyek dan seluruh klip di dalamnya';
+        delJobBtn.onclick = async () => {
+          if (confirm(`Hapus proyek "${job.title || 'ini'}" dan seluruh hasil rendernya?`)) {
+            try {
+              await request(`/api/jobs/${job.id}`, { method: 'DELETE' });
+              notify('Proyek Dihapus', `Proyek "${job.title || ''}" telah dihapus.`, '🗑️');
+              await refresh();
+            } catch (err) { alert(err.message); }
+          }
+        };
 
-    section.append(cards);
-    root.append(section);
-  }
-}
+        jobActions.append(renameBtn, addClipBtn);
+        if (job.zip) jobActions.append(link('↓ ZIP', media(job, job.zip), true));
+        jobActions.append(delJobBtn);
 
-// Background refresh & realtime status
-async function refresh() {
-  clearTimeout(timer);
-  try {
-    const s = await request('/api/status');
-    token = s.token;
-    $('connection').textContent = s.ai_ready ? 'Siap' : 'API Key Kosong';
-    const ki = $('key-indicator');
-    if (ki) ki.className = 'key-dot ' + (s.ai_ready ? 'ready' : '');
-    $('key-status').textContent = s.ai_ready ? '✓ Kunci aktif' : '⚠ Perlu diisi';
-    if (document.activeElement !== $('model')) $('model').value = s.model;
-    if (document.activeElement !== $('base-url')) $('base-url').value = s.base_url === 'https://api.anthropic.com' ? '' : s.base_url || '';
+        head.append(titleRow, jobActions);
+        section.append(head);
 
-    const next = await request('/api/jobs');
-    active = next.some(j => ['queued', 'fetching', 'analyzing', 'rendering'].includes(j.stage));
-    $('generate').disabled = active || !s.ai_ready;
+        if (job.error) section.append(el('p', job.error, 'error'));
 
-    for (const j of next) {
-      const prevStage = prevJobStages.get(j.id);
-      if (prevStage && prevStage !== j.stage) {
-        const name = j.title || 'Video';
-        if (j.stage === 'fetching') notify('Mengunduh Video', `Mengambil sumber video "${name}"...`, '📥');
-        else if (j.stage === 'analyzing') notify('Menganalisis Momen', `Mendeteksi momen terbaik dalam "${name}"...`, '🔍');
-        else if (j.stage === 'rendering') notify('Sedang Merender Video', `Merender klip untuk "${name}"...`, '⚙️');
-        else if (j.stage === 'done') notify('Render Selesai!', `Semua klip untuk "${name}" selesai dirender.`, '✅');
-        else if (j.stage === 'error') notify('Proses Gagal', j.error || `Gagal memproses "${name}".`, '⚠️');
+        const cards = el('div', undefined, 'cards');
+        (job.clips || []).forEach((clip, i) => {
+          const card = el('article', undefined, 'card');
+          const preview = el('div', undefined, 'card-preview');
+
+          if (clip.file) {
+            const vid = el('video');
+            vid.controls = true; vid.preload = 'metadata'; vid.playsInline = true;
+            vid.src = media(job, clip.file);
+            if (clip.poster) vid.poster = media(job, clip.poster);
+            preview.append(vid);
+          } else if (clip.poster) {
+            const img = el('img');
+            img.src = media(job, clip.poster);
+            img.alt = 'Thumbnail ' + (i + 1);
+            preview.append(img);
+          } else {
+            const placeholder = el('div', undefined, 'empty-reel');
+            preview.append(placeholder);
+          }
+
+          preview.append(el('span', 'KLIP ' + String(i + 1).padStart(2, '0'), 'clip-number'));
+          if (clip.duration) preview.append(el('span', `${Math.round(clip.duration)}s`, 'clip-duration-badge'));
+          card.append(preview);
+
+          const body = el('div', undefined, 'card-body');
+          const info = el('div');
+          info.append(
+            el('span', `${stamp(clip.start)} — ${stamp(clip.end)}`, 'time muted'),
+            el('h4', clip.title || `Klip ${i + 1}`),
+            el('small', stages[clip.status] || clip.status, 'muted')
+          );
+          body.append(info);
+
+          // Clip CRUD Action Buttons
+          const actions = el('div', undefined, 'card-actions');
+          if (clip.source_file) {
+            const editBtn = el('button', 'Edit & Potong', 'primary btn-sm');
+            editBtn.disabled = active;
+            editBtn.onclick = () => openEditor(job, i);
+            actions.append(editBtn);
+          }
+
+          const dupBtn = el('button', '⎘ Duplikat', 'quiet btn-sm');
+          dupBtn.title = 'Duplikat klip ini untuk variasi trim';
+          dupBtn.onclick = async () => {
+            try {
+              await request(`/api/jobs/${job.id}/clips`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ copy_from: i, title: `${clip.title || 'Klip'} (Salinan)` }) });
+              notify('Klip Diduplikasi', 'Salinan klip siap diedit.', '⎘');
+              await refresh();
+            } catch (err) { alert(err.message); }
+          };
+          actions.append(dupBtn);
+
+          if (clip.file) {
+            actions.append(link('↓ MP4', media(job, clip.file), true));
+          }
+
+          const delClipBtn = el('button', '✕', 'btn-danger btn-sm');
+          delClipBtn.title = 'Hapus klip ini';
+          delClipBtn.onclick = async () => {
+            if (confirm(`Hapus "${clip.title || 'klip ini'}"?`)) {
+              try {
+                await request(`/api/jobs/${job.id}/clips/${i}`, { method: 'DELETE' });
+                notify('Klip Dihapus', 'Klip telah dihapus dari daftar.', '🗑️');
+                await refresh();
+              } catch (err) { alert(err.message); }
+            }
+          };
+          actions.append(delClipBtn);
+
+          body.append(actions);
+          card.append(body);
+          cards.append(card);
+        });
+
+        section.append(cards);
+        root.append(section);
       }
-      prevJobStages.set(j.id, j.stage);
+    }
 
-      (j.clips || []).forEach((c, idx) => {
-        const cKey = `${j.id}:${idx}`;
-        const prevCStat = prevClipStatus.get(cKey);
-        if (prevCStat && prevCStat !== c.status && c.status === 'done') {
-          notify('Klip Siap!', `Klip "${c.title || `Klip ${idx + 1}`}" selesai dirender.`, '✨');
+    // Background refresh & realtime status
+    async function refresh() {
+      clearTimeout(timer);
+      try {
+        const s = await request('/api/status');
+        token = s.token;
+        $('connection').textContent = s.ai_ready ? 'Siap' : 'API Key Kosong';
+        const ki = $('key-indicator');
+        if (ki) ki.className = 'key-dot ' + (s.ai_ready ? 'ready' : '');
+        $('key-status').textContent = s.ai_ready ? '✓ Kunci aktif' : '⚠ Perlu diisi';
+        if (document.activeElement !== $('model')) $('model').value = s.model;
+        if (document.activeElement !== $('base-url')) $('base-url').value = s.base_url === 'https://api.anthropic.com' ? '' : s.base_url || '';
+
+        const next = await request('/api/jobs');
+        active = next.some(j => ['queued', 'fetching', 'analyzing', 'rendering'].includes(j.stage));
+        $('generate').disabled = active || !s.ai_ready;
+
+        for (const j of next) {
+          const prevStage = prevJobStages.get(j.id);
+          if (prevStage && prevStage !== j.stage) {
+            const name = j.title || 'Video';
+            if (j.stage === 'fetching') notify('Mengunduh Video', `Mengambil sumber video "${name}"...`, '📥');
+            else if (j.stage === 'analyzing') notify('Menganalisis Momen', `Mendeteksi momen terbaik dalam "${name}"...`, '🔍');
+            else if (j.stage === 'rendering') notify('Sedang Merender Video', `Merender klip untuk "${name}"...`, '⚙️');
+            else if (j.stage === 'done') notify('Render Selesai!', `Semua klip untuk "${name}" selesai dirender.`, '✅');
+            else if (j.stage === 'error') notify('Proses Gagal', j.error || `Gagal memproses "${name}".`, '⚠️');
+          }
+          prevJobStages.set(j.id, j.stage);
+
+          (j.clips || []).forEach((c, idx) => {
+            const cKey = `${j.id}:${idx}`;
+            const prevCStat = prevClipStatus.get(cKey);
+            if (prevCStat && prevCStat !== c.status && c.status === 'done') {
+              notify('Klip Siap!', `Klip "${c.title || `Klip ${idx + 1}`}" selesai dirender.`, '✨');
+            }
+            prevClipStatus.set(cKey, c.status);
+          });
         }
-        prevClipStatus.set(cKey, c.status);
-      });
+
+        jobs = next;
+        const signature = JSON.stringify(next) + active;
+        if (signature !== last) { last = signature; renderJobs(); }
+      } catch (e) {
+        message(e.message);
+        $('connection').textContent = 'Offline';
+      } finally {
+        timer = setTimeout(refresh, active ? 3000 : 10000);
+      }
     }
 
-    jobs = next;
-    const signature = JSON.stringify(next) + active;
-    if (signature !== last) { last = signature; renderJobs(); }
-  } catch (e) {
-    message(e.message);
-    $('connection').textContent = 'Offline';
-  } finally {
-    timer = setTimeout(refresh, active ? 3000 : 10000);
-  }
-}
-
-// Topbar API Settings Modal Handlers
-$('btn-open-settings').onclick = () => $('settings-dialog').showModal();
-$('btn-close-settings').onclick = () => $('settings-dialog').close();
-$('settings-form').onsubmit = async e => {
-  e.preventDefault();
-  try {
-    await request('/api/settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ api_key: $('api-key').value, model: $('model').value, base_url: $('base-url').value })
-    });
-    $('api-key').value = '';
-    message('');
-    $('settings-dialog').close();
-    notify('Pengaturan Disimpan', 'Konfigurasi AI berhasil diperbarui.', '⚙️');
-    await refresh();
-  } catch (err) {
-    message(err.message);
-  }
-};
-
-// New Job submission
-$('new-job').onsubmit = async e => {
-  e.preventDefault();
-  message('');
-  const url = $('url').value.trim(), video = $('video').files[0], srt = $('srt').files[0];
-  if (!!url === !!video) return message('Pilih salah satu: link YouTube atau upload video lokal.');
-  if (video && !srt) return message('Upload video membutuhkan file subtitle SRT.');
-  if (video && video.size > 1024 ** 3) return message('Video maksimal 1 GB.');
-
-  const form = new FormData();
-  form.set('url', url);
-  form.set('count', $('count').value);
-  form.set('creator', $('creator').value);
-  form.set('consent', $('consent').checked ? 'yes' : '');
-  form.set('lang', $('lang').value);
-  if (video) form.set('video', video);
-  if (srt) form.set('captions', srt);
-
-  $('generate').disabled = true;
-  notify('Dalam Antrean', 'Video ditambahkan ke antrean dan akan segera diproses.', '⏳');
-  try {
-    await request('/api/jobs', { method: 'POST', body: form });
-    $('url').value = '';
-    if (video) $('video').value = '';
-    if (srt) $('srt').value = '';
-    await refresh();
-  } catch (err) {
-    message(err.message);
-    $('generate').disabled = false;
-  }
-};
-
-// Video Monitor & Crop Box Handling
-const video = $('source-video'), wrap = $('crop-wrapper');
-let initialAiCrop = [0, .65, .3, .32], sourceInfo = null, trimStart = 0, trimEnd = 1, dragMode = null, startPt = null, startBox = null;
-function layoutMode() { return document.querySelector('input[name="layout"]:checked').value; }
-function setLayout(value) { document.querySelector(`input[name="layout"][value="${['split', 'contained', 'no_face'].includes(value) ? value : 'split'}"]`).checked = true; }
-function syncFace() {
-  const off = $('no-face').checked;
-  $('crop-box').hidden = off;
-  ['crop-x', 'crop-y', 'crop-w', 'crop-h'].forEach(id => $(id).disabled = off);
-}
-function updateCropBox(x, y, w, h) {
-  x = Math.max(0, Math.min(.97, Number(x) || 0));
-  y = Math.max(0, Math.min(.97, Number(y) || 0));
-  w = Math.max(.03, Math.min(1 - x, Number(w) || .2));
-  h = Math.max(.03, Math.min(1 - y, Number(h) || .2));
-  $('crop-x').value = x.toFixed(3); $('crop-y').value = y.toFixed(3);
-  $('crop-w').value = w.toFixed(3); $('crop-h').value = h.toFixed(3);
-  const b = $('crop-box');
-  b.style.left = x * 100 + '%'; b.style.top = y * 100 + '%';
-  b.style.width = w * 100 + '%'; b.style.height = h * 100 + '%';
-}
-function setCropPreset(...box) {
-  $('no-face').checked = false;
-  if (layoutMode() === 'no_face') setLayout('split');
-  syncFace(); updateCropBox(...box); dirty = true;
-}
-function fitMonitor() {
-  const stage = $('monitor-stage'), ratio = video.videoWidth && video.videoHeight ? video.videoWidth / video.videoHeight : 16 / 9;
-  const width = Math.min(stage.clientWidth, stage.clientHeight * ratio);
-  wrap.style.width = width + 'px'; wrap.style.height = width / ratio + 'px';
-}
-new ResizeObserver(fitMonitor).observe($('monitor-stage'));
-
-wrap.onpointerdown = e => {
-  if ($('no-face').checked || !sourceInfo || e.button !== 0) return;
-  e.preventDefault(); wrap.setPointerCapture(e.pointerId);
-  const r = wrap.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-  startPt = { x, y };
-  startBox = { x: Number($('crop-x').value), y: Number($('crop-y').value), w: Number($('crop-w').value), h: Number($('crop-h').value) };
-  const handle = e.target.closest('.crop-h');
-  if (handle) dragMode = 'resize-' + handle.dataset.h;
-  else if (x >= startBox.x && x <= startBox.x + startBox.w && y >= startBox.y && y <= startBox.y + startBox.h) dragMode = 'move';
-  else { dragMode = 'draw'; updateCropBox(x, y, .05, .05); }
-  dirty = true;
-};
-wrap.onpointermove = e => {
-  if (!dragMode || !startPt) return;
-  const r = wrap.getBoundingClientRect(), px = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), py = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height)), dx = px - startPt.x, dy = py - startPt.y;
-  let { x, y, w, h } = startBox;
-  if (dragMode === 'move') { x = Math.max(0, Math.min(1 - w, x + dx)); y = Math.max(0, Math.min(1 - h, y + dy)); }
-  else if (dragMode === 'draw') { x = Math.min(startPt.x, px); y = Math.min(startPt.y, py); w = Math.abs(px - startPt.x); h = Math.abs(py - startPt.y); }
-  else {
-    const corner = dragMode.split('-')[1];
-    if (corner.includes('l')) { x = Math.max(0, Math.min(startBox.x + w - .03, x + dx)); w = startBox.x + startBox.w - x; }
-    if (corner.includes('r')) w = Math.max(.03, Math.min(1 - x, w + dx));
-    if (corner.includes('t')) { y = Math.max(0, Math.min(startBox.y + h - .03, y + dy)); h = startBox.y + startBox.h - y; }
-    if (corner.includes('b')) h = Math.max(.03, Math.min(1 - y, h + dy));
-  }
-  updateCropBox(x, y, w, h);
-};
-wrap.onpointerup = wrap.onpointercancel = e => {
-  if (wrap.hasPointerCapture(e.pointerId)) wrap.releasePointerCapture(e.pointerId);
-  dragMode = null; startPt = null;
-};
-$('crop-box').onkeydown = e => {
-  const offsets = { ArrowLeft: [-.005, 0], ArrowRight: [.005, 0], ArrowUp: [0, -.005], ArrowDown: [0, .005] };
-  if (!offsets[e.key]) return;
-  e.preventDefault();
-  const [dx, dy] = offsets[e.key], w = Number($('crop-w').value), h = Number($('crop-h').value);
-  updateCropBox(Math.min(1 - w, Number($('crop-x').value) + dx), Math.min(1 - h, Number($('crop-y').value) + dy), w, h);
-  dirty = true;
-};
-['crop-x', 'crop-y', 'crop-w', 'crop-h'].forEach(id => { $(id).oninput = () => updateCropBox(...['x', 'y', 'w', 'h'].map(k => $('crop-' + k).value)); });
-document.querySelectorAll('[data-crop]').forEach(button => button.onclick = () => setCropPreset(...button.dataset.crop.split(',').map(Number)));
-$('reset-crop').onclick = () => setCropPreset(...initialAiCrop);
-$('no-face').onchange = () => { if ($('no-face').checked) setLayout('no_face'); else if (layoutMode() === 'no_face') setLayout('split'); syncFace(); };
-document.querySelectorAll('input[name="layout"]').forEach(input => input.onchange = () => { $('no-face').checked = layoutMode() === 'no_face'; syncFace(); });
-
-function position() { return (sourceInfo?.source_start || 0) + (video.currentTime || 0); }
-function seekTo(time) { if (!sourceInfo || video.readyState < 1) return; video.currentTime = Math.max(0, Math.min(video.duration, time - sourceInfo.source_start)); updatePlayhead(); }
-function updatePlayhead() {
-  if (!sourceInfo) return;
-  const time = position(), span = sourceInfo.source_end - sourceInfo.source_start;
-  $('playhead-time').textContent = timecode(time);
-  $('timeline-playhead').style.left = Math.max(0, Math.min(100, (time - sourceInfo.source_start) / span * 100)) + '%';
-}
-
-let cutStart = null, cutEnd = null, tStartCutIn = 0, tStartCutOut = 0;
-function drawTrim() {
-  if (!sourceInfo) return;
-  const { source_start: min, source_end: max } = sourceInfo, span = max - min;
-  $('trim-in').value = trimStart; $('trim-out').value = trimEnd;
-  $('edit-start').value = timecode(trimStart); $('edit-end').value = timecode(trimEnd);
-  const hasCut = cutStart !== null && cutEnd !== null && cutEnd > cutStart;
-  const cutZone = $('timeline-cut-zone'), cutGroup = $('cut-fields-group'), toggleBtn = $('toggle-cut');
-  const trackDur = $('clip-track-duration');
-
-  if (hasCut) {
-    cutZone.hidden = false; if (cutGroup) cutGroup.hidden = false;
-    toggleBtn.classList.add('active'); toggleBtn.textContent = '✕ Batal Potong';
-    cutZone.style.left = (cutStart - min) / span * 100 + '%';
-    cutZone.style.width = (cutEnd - cutStart) / span * 100 + '%';
-    $('edit-cut-start').value = timecode(cutStart);
-    $('edit-cut-end').value = timecode(cutEnd);
-    const cutDur = cutEnd - cutStart, effDur = (trimEnd - trimStart) - cutDur;
-    $('trim-duration').textContent = `${effDur.toFixed(2)}s (-${cutDur.toFixed(1)}s dibuang)`;
-    if (trackDur) trackDur.textContent = timecode(effDur);
-  } else {
-    cutZone.hidden = true; if (cutGroup) cutGroup.hidden = true;
-    toggleBtn.classList.remove('active'); toggleBtn.textContent = '✂️ Potong Tengah';
-    const effDur = trimEnd - trimStart;
-    $('trim-duration').textContent = effDur.toFixed(2) + ' detik';
-    if (trackDur) trackDur.textContent = timecode(effDur);
-  }
-
-  $('timeline-selection').style.left = (trimStart - min) / span * 100 + '%';
-  $('timeline-selection').style.width = (trimEnd - trimStart) / span * 100 + '%';
-  $('timeline-dim-left').style.width = (trimStart - min) / span * 100 + '%';
-  $('timeline-dim-right').style.width = (max - trimEnd) / span * 100 + '%';
-
-  const err = rangeError(trimStart, trimEnd, min, max, hasCut ? cutStart : null, hasCut ? cutEnd : null);
-  $('trim-error').textContent = err;
-  $('rerender').disabled = !!err || saving || video.readyState < 1;
-}
-
-function setTrim(start, end, seek = true, cStart = cutStart, cEnd = cutEnd) {
-  if (!sourceInfo) return false;
-  const hasCut = cStart !== null && cEnd !== null && cEnd > cStart;
-  const error = rangeError(start, end, sourceInfo.source_start, sourceInfo.source_end, hasCut ? cStart : null, hasCut ? cEnd : null);
-  $('trim-error').textContent = error;
-  $('rerender').disabled = !!error || saving || video.readyState < 1;
-  if (error) return false;
-  trimStart = start; trimEnd = end; cutStart = hasCut ? cStart : null; cutEnd = hasCut ? cEnd : null;
-  drawTrim(); dirty = true;
-  if (seek) seekTo(start);
-  return true;
-}
-
-// CapCut Drag Handle Controls
-const track = $('timeline-track');
-let timelineDrag = null, tDragStart = 0, tStartIn = 0, tStartOut = 0;
-function trackTime(clientX) {
-  if (!sourceInfo) return 0;
-  const r = track.getBoundingClientRect(), ratio = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
-  return sourceInfo.source_start + ratio * (sourceInfo.source_end - sourceInfo.source_start);
-}
-track.onpointerdown = e => {
-  if (!sourceInfo || e.button !== 0) return;
-  e.preventDefault(); track.setPointerCapture(e.pointerId);
-  const handle = e.target.closest('.capcut-handle');
-  const cutHandle = e.target.closest('.cut-handle');
-  const cutZone = e.target.closest('.timeline-cut-zone');
-  const body = e.target.closest('.selection-body');
-  tDragStart = trackTime(e.clientX); tStartIn = trimStart; tStartOut = trimEnd;
-  tStartCutIn = cutStart; tStartCutOut = cutEnd;
-  if (cutHandle) { timelineDrag = cutHandle.dataset.handle; }
-  else if (cutZone) { timelineDrag = 'cut-move'; cutZone.classList.add('dragging'); }
-  else if (handle) { timelineDrag = handle.dataset.handle; }
-  else if (body) { timelineDrag = 'move'; $('timeline-selection').classList.add('dragging'); }
-  else { timelineDrag = 'seek'; video.pause(); seekTo(tDragStart); }
-  dirty = true;
-};
-track.onpointermove = e => {
-  if (!timelineDrag || !sourceInfo) return;
-  const curr = trackTime(e.clientX), delta = curr - tDragStart, min = sourceInfo.source_start, max = sourceInfo.source_end;
-  const hasCut = cutStart !== null && cutEnd !== null && cutEnd > cutStart;
-  if (timelineDrag === 'left') {
-    let s = Math.max(min, Math.min(tStartOut - 1, tStartIn + delta));
-    if (hasCut && s > cutStart - .2) s = cutStart - .2;
-    const dur = hasCut ? (cutStart - s) + (tStartOut - cutEnd) : (tStartOut - s);
-    if (dur > 60) s = hasCut ? (cutStart - (60 - (tStartOut - cutEnd))) : tStartOut - 60;
-    setTrim(s, tStartOut, true, cutStart, cutEnd);
-  } else if (timelineDrag === 'right') {
-    let ed = Math.min(max, Math.max(tStartIn + 1, tStartOut + delta));
-    if (hasCut && ed < cutEnd + .2) ed = cutEnd + .2;
-    const dur = hasCut ? (cutStart - tStartIn) + (ed - cutEnd) : (ed - tStartIn);
-    if (dur > 60) ed = hasCut ? (cutEnd + (60 - (cutStart - tStartIn))) : tStartIn + 60;
-    setTrim(tStartIn, ed, false, cutStart, cutEnd); seekTo(Math.max(tStartIn, ed - .05));
-  } else if (timelineDrag === 'move') {
-    const dur = tStartOut - tStartIn; let s = tStartIn + delta;
-    if (s < min) s = min; if (s + dur > max) s = max - dur;
-    let cs = cutStart, ce = cutEnd;
-    if (hasCut) { const cDur = tStartCutOut - tStartCutIn; cs = s + (tStartCutIn - tStartIn); ce = cs + cDur; }
-    setTrim(s, s + dur, true, cs, ce);
-  } else if (timelineDrag === 'cut-left') {
-    if (!hasCut) return;
-    let cs = Math.max(trimStart + .2, Math.min(tStartCutOut - .2, tStartCutIn + delta));
-    setTrim(trimStart, trimEnd, false, cs, tStartCutOut); seekTo(cs);
-  } else if (timelineDrag === 'cut-right') {
-    if (!hasCut) return;
-    let ce = Math.min(trimEnd - .2, Math.max(tStartCutIn + .2, tStartCutOut + delta));
-    setTrim(trimStart, trimEnd, false, tStartCutIn, ce); seekTo(ce);
-  } else if (timelineDrag === 'cut-move') {
-    if (!hasCut) return;
-    const cDur = tStartCutOut - tStartCutIn; let cs = tStartCutIn + delta;
-    if (cs < trimStart + .2) cs = trimStart + .2;
-    if (cs + cDur > trimEnd - .2) cs = trimEnd - .2 - cDur;
-    setTrim(trimStart, trimEnd, false, cs, cs + cDur); seekTo(cs);
-  } else if (timelineDrag === 'seek') {
-    video.pause(); seekTo(curr);
-  }
-};
-track.onpointerup = track.onpointercancel = e => {
-  if (track.hasPointerCapture(e.pointerId)) track.releasePointerCapture(e.pointerId);
-  timelineDrag = null; $('timeline-selection').classList.remove('dragging'); $('timeline-cut-zone').classList.remove('dragging');
-};
-
-// Transport and step controls
-$('nudge-back-1s').onclick = () => { if (!sourceInfo) return; video.pause(); seekTo(Math.max(sourceInfo.source_start, position() - 1)); };
-$('nudge-back-frame').onclick = () => { if (!sourceInfo) return; video.pause(); seekTo(Math.max(sourceInfo.source_start, position() - .05)); };
-$('nudge-fwd-frame').onclick = () => { if (!sourceInfo) return; video.pause(); seekTo(Math.min(sourceInfo.source_end, position() + .05)); };
-$('nudge-fwd-1s').onclick = () => { if (!sourceInfo) return; video.pause(); seekTo(Math.min(sourceInfo.source_end, position() + 1)); };
-
-$('trim-in').oninput = e => { const start = Math.min(Number(e.target.value), sourceInfo.source_end - 1), end = Math.min(sourceInfo.source_end, Math.max(start + 1, Math.min(trimEnd, start + 60))); setTrim(start, end); };
-$('trim-out').oninput = e => { const end = Math.max(Number(e.target.value), sourceInfo.source_start + 1), start = Math.max(sourceInfo.source_start, Math.min(end - 1, Math.max(trimStart, end - 60))); setTrim(start, end); seekTo(Math.max(start, end - .05)); };
-
-for (const id of ['edit-start', 'edit-end']) $(id).oninput = () => { const a = parseTime($('edit-start').value), b = parseTime($('edit-end').value); const error = rangeError(a, b, sourceInfo.source_start, sourceInfo.source_end, cutStart, cutEnd); $('trim-error').textContent = error; $('rerender').disabled = !!error || saving || video.readyState < 1; if (!error) { setTrim(a, b, id === 'edit-start'); } };
-for (const id of ['edit-cut-start', 'edit-cut-end']) { const el = $(id); if (el) el.oninput = () => { const cs = parseTime($('edit-cut-start').value), ce = parseTime($('edit-cut-end').value); const err = rangeError(trimStart, trimEnd, sourceInfo.source_start, sourceInfo.source_end, cs, ce); $('trim-error').textContent = err; $('rerender').disabled = !!err || saving || video.readyState < 1; if (!err) { cutStart = cs; cutEnd = ce; drawTrim(); } }; }
-
-$('toggle-cut').onclick = () => {
-  if (!sourceInfo) return;
-  if (cutStart !== null && cutEnd !== null) { cutStart = null; cutEnd = null; drawTrim(); return; }
-  const dur = trimEnd - trimStart;
-  if (dur < 2) { $('trim-error').textContent = 'Durasi klip minimal 2 detik untuk potong tengah.'; return; }
-  const mid = (trimStart + trimEnd) / 2, cSpan = Math.min(dur * 0.3, 5);
-  cutStart = Math.round((mid - cSpan / 2) * 100) / 100;
-  cutEnd = Math.round((mid + cSpan / 2) * 100) / 100;
-  drawTrim(); seekTo(cutStart);
-};
-if ($('remove-cut')) $('remove-cut').onclick = () => { cutStart = null; cutEnd = null; drawTrim(); };
-if ($('set-cut-in')) $('set-cut-in').onclick = () => { const p = position(); if (p > trimStart + .2 && (cutEnd === null || p < cutEnd - .2)) { cutStart = Math.round(p * 1000) / 1000; drawTrim(); } };
-if ($('set-cut-out')) $('set-cut-out').onclick = () => { const p = position(); if (p < trimEnd - .2 && (cutStart === null || p > cutStart + .2)) { cutEnd = Math.round(p * 1000) / 1000; drawTrim(); } };
-
-$('set-in').onclick = () => setTrim(Math.round(position() * 1000) / 1000, trimEnd);
-$('set-out').onclick = () => setTrim(trimStart, Math.round(position() * 1000) / 1000, false);
-$('reset-trim').onclick = () => setTrim(sourceInfo.start, sourceInfo.end, true, null, null);
-
-$('play-preview').onclick = async () => {
-  if (!video.paused) { video.pause(); return; }
-  const pos = position(), hasCut = cutStart !== null && cutEnd !== null && cutEnd > cutStart;
-  if (pos < trimStart || pos >= trimEnd - .04) seekTo(trimStart);
-  else if (hasCut && pos >= cutStart && pos < cutEnd) seekTo(cutEnd);
-  try { await video.play(); } catch { $('edit-error').textContent = 'Preview tidak dapat diputar. Periksa format video sumber.'; }
-};
-$('mute-preview').onclick = () => { video.muted = !video.muted; $('mute-preview').textContent = video.muted ? 'Suara mati' : 'Suara aktif'; $('mute-preview').setAttribute('aria-pressed', String(video.muted)); };
-video.onplay = () => { $('play-preview').textContent = 'Ⅱ Jeda'; };
-video.onpause = () => { $('play-preview').textContent = '▶ Putar'; };
-video.ontimeupdate = () => {
-  if (sourceInfo && !video.paused) {
-    const pos = position(), hasCut = cutStart !== null && cutEnd !== null && cutEnd > cutStart;
-    if (hasCut && pos >= cutStart && pos < cutEnd) seekTo(cutEnd);
-    if (pos >= trimEnd) { video.pause(); seekTo(trimEnd); }
-  }
-  updatePlayhead();
-};
-video.onloadedmetadata = () => { if (!sourceInfo) return; fitMonitor(); seekTo(trimStart); $('play-preview').disabled = false; $('mute-preview').disabled = false; drawTrim(); $('source-loading').hidden = true; };
-video.onerror = () => { if (!$('editor').open || !sourceInfo) return; $('edit-error').textContent = 'Video sumber tidak bisa dimuat.'; $('rerender').disabled = true; $('play-preview').disabled = true; $('source-loading').hidden = true; };
-
-// Keyboard Shortcuts
-window.addEventListener('keydown', e => {
-  if (!$('editor').open || !sourceInfo) return;
-  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
-  if (e.code === 'Space') { e.preventDefault(); $('play-preview').click(); }
-  else if (e.key === '[') { e.preventDefault(); $('set-in').click(); }
-  else if (e.key === ']') { e.preventDefault(); $('set-out').click(); }
-  else if (e.key === '{') { e.preventDefault(); if ($('set-cut-in')) $('set-cut-in').click(); }
-  else if (e.key === '}') { e.preventDefault(); if ($('set-cut-out')) $('set-cut-out').click(); }
-  else if (e.key === 'ArrowLeft') { e.preventDefault(); video.pause(); seekTo(Math.max(sourceInfo.source_start, position() - (e.shiftKey ? 1 : .05))); }
-  else if (e.key === 'ArrowRight') { e.preventDefault(); video.pause(); seekTo(Math.min(sourceInfo.source_end, position() + (e.shiftKey ? 1 : .05))); }
-});
-
-async function openEditor(job, i) {
-  document.querySelectorAll('.card video').forEach(v => v.pause());
-  const session = { job, i };
-  current = session; sourceInfo = null; dirty = false; saving = false;
-  video.pause(); video.removeAttribute('src'); video.load(); dragMode = null; startPt = null;
-
-  const c = job.clips[i];
-  $('editor-context').textContent = 'KLIP ' + String(i + 1).padStart(2, '0') + ' / ' + (job.title || 'Video');
-  $('editor-title').textContent = c.title || 'Timeline Editor';
-
-  const filmstrip = $('timeline-filmstrip');
-  if (filmstrip) filmstrip.style.backgroundImage = `url('/api/jobs/${job.id}/clips/${i}/filmstrip')`;
-  const waveform = $('timeline-waveform');
-  if (waveform) waveform.style.backgroundImage = `url('/api/jobs/${job.id}/clips/${i}/waveform')`;
-  const clipName = $('clip-track-filename');
-  if (clipName) clipName.textContent = (c.source_file ? c.source_file.split('/').pop() : (c.title ? c.title.slice(0, 24) : 'clip.mp4'));
-
-  for (const key of ['title', 'hook', 'narration', 'creator']) $('edit-' + key).value = c[key] || '';
-  $('no-face').checked = !c.face_box || c.layout_mode === 'no_face';
-  initialAiCrop = [...(c.face_box || [0, .65, .28, .32])];
-  updateCropBox(...initialAiCrop);
-  setLayout(c.layout_mode || ($('no-face').checked ? 'no_face' : 'split'));
-  syncFace();
-  $('edit-lang').value = c.lang || job.lang || 'id';
-  $('zoom-at').value = c.zoom_at || 0;
-  $('zoom-at').max = c.duration || 60;
-  $('edit-captions').value = JSON.stringify(c.captions || [], null, 2);
-  $('edit-error').textContent = '';
-  $('trim-error').textContent = '';
-  $('source-loading').hidden = false;
-  $('source-loading').textContent = 'Memuat video sumber…';
-  $('source-bounds').textContent = '';
-  $('rerender').disabled = true;
-
-  for (const id of ['play-preview', 'mute-preview', 'nudge-back-1s', 'nudge-back-frame', 'nudge-fwd-frame', 'nudge-fwd-1s', 'trim-in', 'trim-out', 'edit-start', 'edit-end', 'set-in', 'set-out', 'reset-trim', 'toggle-cut']) {
-    if ($(id)) $(id).disabled = true;
-  }
-  $('editor').showModal();
-
-  try {
-    const info = await request(`/api/jobs/${job.id}/clips/${i}/source`);
-    if (current !== session || !$('editor').open) return;
-    sourceInfo = info; trimStart = info.start; trimEnd = info.end;
-    cutStart = info.cut_start != null ? info.cut_start : null;
-    cutEnd = info.cut_end != null ? info.cut_end : null;
-
-    for (const id of ['trim-in', 'trim-out']) { $(id).min = info.source_start; $(id).max = info.source_end; $(id).disabled = false; }
-    for (const id of ['play-preview', 'mute-preview', 'nudge-back-1s', 'nudge-back-frame', 'nudge-fwd-frame', 'nudge-fwd-1s', 'edit-start', 'edit-end', 'set-in', 'set-out', 'reset-trim', 'toggle-cut']) {
-      if ($(id)) $(id).disabled = false;
-    }
-    $('ruler-start').textContent = stamp(info.source_start);
-    $('ruler-mid').textContent = stamp((info.source_start + info.source_end) / 2);
-    $('ruler-end').textContent = stamp(info.source_end);
-    $('source-bounds').textContent = `Sumber: ${timecode(info.source_start)} – ${timecode(info.source_end)}.`;
-    $('zoom-at').max = Math.min(60, info.end - info.start);
-    drawTrim();
-    video.src = media(job, info.source_file);
-    video.load();
-  } catch (err) {
-    if (current !== session) return;
-    $('edit-error').textContent = err.message;
-    $('source-loading').textContent = 'Sumber tidak tersedia. Tutup editor lalu coba lagi.';
-  }
-}
-
-function closeEditor() {
-  if (saving) return;
-  if (dirty && !confirm('Tutup editor dan buang perubahan?')) return;
-  $('editor').close();
-}
-$('close-editor').onclick = closeEditor;
-$('cancel-editor').onclick = closeEditor;
-$('editor').addEventListener('cancel', e => { e.preventDefault(); closeEditor(); });
-$('editor').addEventListener('close', () => { video.pause(); current = null; sourceInfo = null; video.removeAttribute('src'); video.load(); dirty = false; });
-$('edit-form').addEventListener('input', () => { dirty = true; });
-
-$('edit-form').onsubmit = async e => {
-  e.preventDefault();
-  $('edit-error').textContent = '';
-  if (!sourceInfo || saving) return;
-  try {
-    const start = parseTime($('edit-start').value), end = parseTime($('edit-end').value);
-    const hasCut = cutStart !== null && cutEnd !== null && cutEnd > cutStart;
-    const cutS = hasCut ? cutStart : null, cutE = hasCut ? cutEnd : null;
-    const error = rangeError(start, end, sourceInfo.source_start, sourceInfo.source_end, cutS, cutE);
-    if (error) throw Error(error);
-
-    const raw = JSON.parse($('edit-captions').value);
-    if (!Array.isArray(raw) || raw.length > 120 || raw.some(c => !c || typeof c.text !== 'string' || !c.text.length || c.text.length > 180 || !Number.isFinite(c.start) || !Number.isFinite(c.end) || c.start < 0 || c.end <= c.start || c.end > sourceInfo.end - sourceInfo.start + .05)) {
-      throw Error('Subtitle tidak valid.');
-    }
-    const oldZoom = Number($('zoom-at').value);
-    if (!Number.isFinite(oldZoom) || oldZoom < 0 || oldZoom > sourceInfo.end - sourceInfo.start) {
-      throw Error('Waktu zoom melewati rentang klip.');
-    }
-    const effectiveDur = hasCut ? (cutS - start) + (end - cutE) : (end - start);
-    const payload = {
-      start, end, cut_start: cutS, cut_end: cutE,
-      face_box: $('no-face').checked || layoutMode() === 'no_face' ? null : ['x', 'y', 'w', 'h'].map(k => Number($('crop-' + k).value)),
-      zoom_at: Math.min(Math.max(0, oldZoom + sourceInfo.start - start), Math.max(0, effectiveDur - .1)),
-      captions: retimeCaptions(raw, sourceInfo.start, start, end, cutS, cutE),
-      layout_mode: layoutMode(),
-      lang: $('edit-lang').value
+    // Topbar API Settings Modal Handlers
+    $('btn-open-settings').onclick = () => $('settings-dialog').showModal();
+    $('btn-close-settings').onclick = () => $('settings-dialog').close();
+    $('settings-form').onsubmit = async e => {
+      e.preventDefault();
+      try {
+        await request('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ api_key: $('api-key').value, model: $('model').value, base_url: $('base-url').value })
+        });
+        $('api-key').value = '';
+        message('');
+        $('settings-dialog').close();
+        notify('Pengaturan Disimpan', 'Konfigurasi AI berhasil diperbarui.', '⚙️');
+        await refresh();
+      } catch (err) {
+        message(err.message);
+      }
     };
-    for (const key of ['title', 'hook', 'narration', 'creator']) payload[key] = $('edit-' + key).value;
 
-    saving = true; video.pause();
-    $('rerender').disabled = true; $('rerender').textContent = 'Merender…';
-    $('close-editor').disabled = true; $('cancel-editor').disabled = true;
-    notify('Sedang Merender Klip', `Klip "${current?.job?.clips[current?.i]?.title || 'klip'}" sedang dirender ulang...`, '⚙️');
-    await request(`/api/jobs/${current.job.id}/clips/${current.i}/render`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-    dirty = false; $('editor').close(); await refresh();
-  } catch (err) {
-    $('edit-error').textContent = err.message;
-  } finally {
-    saving = false;
-    $('rerender').disabled = !sourceInfo; $('rerender').textContent = 'Simpan & Render ↗';
-    $('close-editor').disabled = false; $('cancel-editor').disabled = false;
-  }
-};
+    // New Job submission
+    $('new-job').onsubmit = async e => {
+      e.preventDefault();
+      message('');
+      const url = $('url').value.trim(), video = $('video').files[0], srt = $('srt').files[0];
+      if (!!url === !!video) return message('Pilih salah satu: link YouTube atau upload video lokal.');
+      if (video && !srt) return message('Upload video membutuhkan file subtitle SRT.');
+      if (video && video.size > 1024 ** 3) return message('Video maksimal 1 GB.');
 
-window.addEventListener('beforeunload', e => { if (dirty && $('editor').open) { e.preventDefault(); e.returnValue = ''; } });
-$('refresh').onclick = refresh;
-refresh();
-</script>
+      const form = new FormData();
+      form.set('url', url);
+      form.set('count', $('count').value);
+      form.set('creator', $('creator').value);
+      form.set('consent', $('consent').checked ? 'yes' : '');
+      form.set('lang', $('lang').value);
+      if (video) form.set('video', video);
+      if (srt) form.set('captions', srt);
+
+      $('generate').disabled = true;
+      notify('Dalam Antrean', 'Video ditambahkan ke antrean dan akan segera diproses.', '⏳');
+      try {
+        await request('/api/jobs', { method: 'POST', body: form });
+        $('url').value = '';
+        if (video) $('video').value = '';
+        if (srt) $('srt').value = '';
+        await refresh();
+      } catch (err) {
+        message(err.message);
+        $('generate').disabled = false;
+      }
+    };
+
+    // Video Monitor & Crop Box Handling
+    const video = $('source-video'), wrap = $('crop-wrapper');
+    let initialAiCrop = [0, .65, .3, .32], sourceInfo = null, trimStart = 0, trimEnd = 1, dragMode = null, startPt = null, startBox = null;
+    function layoutMode() { return document.querySelector('input[name="layout"]:checked').value; }
+    function setLayout(value) { document.querySelector(`input[name="layout"][value="${['split', 'contained', 'no_face'].includes(value) ? value : 'split'}"]`).checked = true; }
+    function syncFace() {
+      const off = $('no-face').checked;
+      $('crop-box').hidden = off;
+      ['crop-x', 'crop-y', 'crop-w', 'crop-h'].forEach(id => $(id).disabled = off);
+    }
+    function updateCropBox(x, y, w, h) {
+      x = Math.max(0, Math.min(.97, Number(x) || 0));
+      y = Math.max(0, Math.min(.97, Number(y) || 0));
+      w = Math.max(.03, Math.min(1 - x, Number(w) || .2));
+      h = Math.max(.03, Math.min(1 - y, Number(h) || .2));
+      $('crop-x').value = x.toFixed(3); $('crop-y').value = y.toFixed(3);
+      $('crop-w').value = w.toFixed(3); $('crop-h').value = h.toFixed(3);
+      const b = $('crop-box');
+      b.style.left = x * 100 + '%'; b.style.top = y * 100 + '%';
+      b.style.width = w * 100 + '%'; b.style.height = h * 100 + '%';
+    }
+    function setCropPreset(...box) {
+      $('no-face').checked = false;
+      if (layoutMode() === 'no_face') setLayout('split');
+      syncFace(); updateCropBox(...box); dirty = true;
+    }
+    function fitMonitor() {
+      const stage = $('monitor-stage'), ratio = video.videoWidth && video.videoHeight ? video.videoWidth / video.videoHeight : 16 / 9;
+      const width = Math.min(stage.clientWidth, stage.clientHeight * ratio);
+      wrap.style.width = width + 'px'; wrap.style.height = width / ratio + 'px';
+    }
+    new ResizeObserver(fitMonitor).observe($('monitor-stage'));
+
+    wrap.onpointerdown = e => {
+      if ($('no-face').checked || !sourceInfo || e.button !== 0) return;
+      e.preventDefault(); wrap.setPointerCapture(e.pointerId);
+      const r = wrap.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      startPt = { x, y };
+      startBox = { x: Number($('crop-x').value), y: Number($('crop-y').value), w: Number($('crop-w').value), h: Number($('crop-h').value) };
+      const handle = e.target.closest('.crop-h');
+      if (handle) dragMode = 'resize-' + handle.dataset.h;
+      else if (x >= startBox.x && x <= startBox.x + startBox.w && y >= startBox.y && y <= startBox.y + startBox.h) dragMode = 'move';
+      else { dragMode = 'draw'; updateCropBox(x, y, .05, .05); }
+      dirty = true;
+    };
+    wrap.onpointermove = e => {
+      if (!dragMode || !startPt) return;
+      const r = wrap.getBoundingClientRect(), px = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), py = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height)), dx = px - startPt.x, dy = py - startPt.y;
+      let { x, y, w, h } = startBox;
+      if (dragMode === 'move') { x = Math.max(0, Math.min(1 - w, x + dx)); y = Math.max(0, Math.min(1 - h, y + dy)); }
+      else if (dragMode === 'draw') { x = Math.min(startPt.x, px); y = Math.min(startPt.y, py); w = Math.abs(px - startPt.x); h = Math.abs(py - startPt.y); }
+      else {
+        const corner = dragMode.split('-')[1];
+        if (corner.includes('l')) { x = Math.max(0, Math.min(startBox.x + w - .03, x + dx)); w = startBox.x + startBox.w - x; }
+        if (corner.includes('r')) w = Math.max(.03, Math.min(1 - x, w + dx));
+        if (corner.includes('t')) { y = Math.max(0, Math.min(startBox.y + h - .03, y + dy)); h = startBox.y + startBox.h - y; }
+        if (corner.includes('b')) h = Math.max(.03, Math.min(1 - y, h + dy));
+      }
+      updateCropBox(x, y, w, h);
+    };
+    wrap.onpointerup = wrap.onpointercancel = e => {
+      if (wrap.hasPointerCapture(e.pointerId)) wrap.releasePointerCapture(e.pointerId);
+      dragMode = null; startPt = null;
+    };
+    $('crop-box').onkeydown = e => {
+      const offsets = { ArrowLeft: [-.005, 0], ArrowRight: [.005, 0], ArrowUp: [0, -.005], ArrowDown: [0, .005] };
+      if (!offsets[e.key]) return;
+      e.preventDefault();
+      const [dx, dy] = offsets[e.key], w = Number($('crop-w').value), h = Number($('crop-h').value);
+      updateCropBox(Math.min(1 - w, Number($('crop-x').value) + dx), Math.min(1 - h, Number($('crop-y').value) + dy), w, h);
+      dirty = true;
+    };
+    ['crop-x', 'crop-y', 'crop-w', 'crop-h'].forEach(id => { $(id).oninput = () => updateCropBox(...['x', 'y', 'w', 'h'].map(k => $('crop-' + k).value)); });
+    document.querySelectorAll('[data-crop]').forEach(button => button.onclick = () => setCropPreset(...button.dataset.crop.split(',').map(Number)));
+    $('reset-crop').onclick = () => setCropPreset(...initialAiCrop);
+    $('no-face').onchange = () => { if ($('no-face').checked) setLayout('no_face'); else if (layoutMode() === 'no_face') setLayout('split'); syncFace(); };
+    document.querySelectorAll('input[name="layout"]').forEach(input => input.onchange = () => { $('no-face').checked = layoutMode() === 'no_face'; syncFace(); });
+
+    function position() { return (sourceInfo?.source_start || 0) + (video.currentTime || 0); }
+    function seekTo(time) { if (!sourceInfo || video.readyState < 1) return; video.currentTime = Math.max(0, Math.min(video.duration, time - sourceInfo.source_start)); updatePlayhead(); }
+    function updatePlayhead() {
+      if (!sourceInfo) return;
+      const time = position(), span = sourceInfo.source_end - sourceInfo.source_start;
+      $('playhead-time').textContent = timecode(time);
+      $('timeline-playhead').style.left = Math.max(0, Math.min(100, (time - sourceInfo.source_start) / span * 100)) + '%';
+    }
+
+    let cutStart = null, cutEnd = null, tStartCutIn = 0, tStartCutOut = 0;
+    function drawTrim() {
+      if (!sourceInfo) return;
+      const { source_start: min, source_end: max } = sourceInfo, span = max - min;
+      $('trim-in').value = trimStart; $('trim-out').value = trimEnd;
+      $('edit-start').value = timecode(trimStart); $('edit-end').value = timecode(trimEnd);
+      const hasCut = cutStart !== null && cutEnd !== null && cutEnd > cutStart;
+      const cutZone = $('timeline-cut-zone'), cutGroup = $('cut-fields-group'), toggleBtn = $('toggle-cut');
+      const trackDur = $('clip-track-duration');
+
+      if (hasCut) {
+        cutZone.hidden = false; if (cutGroup) cutGroup.hidden = false;
+        toggleBtn.classList.add('active'); toggleBtn.textContent = '✕ Batal Potong';
+        cutZone.style.left = (cutStart - min) / span * 100 + '%';
+        cutZone.style.width = (cutEnd - cutStart) / span * 100 + '%';
+        $('edit-cut-start').value = timecode(cutStart);
+        $('edit-cut-end').value = timecode(cutEnd);
+        const cutDur = cutEnd - cutStart, effDur = (trimEnd - trimStart) - cutDur;
+        $('trim-duration').textContent = `${effDur.toFixed(2)}s (-${cutDur.toFixed(1)}s dibuang)`;
+        if (trackDur) trackDur.textContent = timecode(effDur);
+      } else {
+        cutZone.hidden = true; if (cutGroup) cutGroup.hidden = true;
+        toggleBtn.classList.remove('active'); toggleBtn.textContent = '✂️ Potong Tengah';
+        const effDur = trimEnd - trimStart;
+        $('trim-duration').textContent = effDur.toFixed(2) + ' detik';
+        if (trackDur) trackDur.textContent = timecode(effDur);
+      }
+
+      $('timeline-selection').style.left = (trimStart - min) / span * 100 + '%';
+      $('timeline-selection').style.width = (trimEnd - trimStart) / span * 100 + '%';
+      $('timeline-dim-left').style.width = (trimStart - min) / span * 100 + '%';
+      $('timeline-dim-right').style.width = (max - trimEnd) / span * 100 + '%';
+
+      const err = rangeError(trimStart, trimEnd, min, max, hasCut ? cutStart : null, hasCut ? cutEnd : null);
+      $('trim-error').textContent = err;
+      $('rerender').disabled = !!err || saving || video.readyState < 1;
+    }
+
+    function setTrim(start, end, seek = true, cStart = cutStart, cEnd = cutEnd) {
+      if (!sourceInfo) return false;
+      const hasCut = cStart !== null && cEnd !== null && cEnd > cStart;
+      const error = rangeError(start, end, sourceInfo.source_start, sourceInfo.source_end, hasCut ? cStart : null, hasCut ? cEnd : null);
+      $('trim-error').textContent = error;
+      $('rerender').disabled = !!error || saving || video.readyState < 1;
+      if (error) return false;
+      trimStart = start; trimEnd = end; cutStart = hasCut ? cStart : null; cutEnd = hasCut ? cEnd : null;
+      drawTrim(); dirty = true;
+      if (seek) seekTo(start);
+      return true;
+    }
+
+    // CapCut Drag Handle Controls
+    const track = $('timeline-track');
+    let timelineDrag = null, tDragStart = 0, tStartIn = 0, tStartOut = 0;
+    function trackTime(clientX) {
+      if (!sourceInfo) return 0;
+      const r = track.getBoundingClientRect(), ratio = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+      return sourceInfo.source_start + ratio * (sourceInfo.source_end - sourceInfo.source_start);
+    }
+    track.onpointerdown = e => {
+      if (!sourceInfo || e.button !== 0) return;
+      e.preventDefault(); track.setPointerCapture(e.pointerId);
+      const handle = e.target.closest('.capcut-handle');
+      const cutHandle = e.target.closest('.cut-handle');
+      const cutZone = e.target.closest('.timeline-cut-zone');
+      const body = e.target.closest('.selection-body');
+      tDragStart = trackTime(e.clientX); tStartIn = trimStart; tStartOut = trimEnd;
+      tStartCutIn = cutStart; tStartCutOut = cutEnd;
+      if (cutHandle) { timelineDrag = cutHandle.dataset.handle; }
+      else if (cutZone) { timelineDrag = 'cut-move'; cutZone.classList.add('dragging'); }
+      else if (handle) { timelineDrag = handle.dataset.handle; }
+      else if (body) { timelineDrag = 'move'; $('timeline-selection').classList.add('dragging'); }
+      else { timelineDrag = 'seek'; video.pause(); seekTo(tDragStart); }
+      dirty = true;
+    };
+    track.onpointermove = e => {
+      if (!timelineDrag || !sourceInfo) return;
+      const curr = trackTime(e.clientX), delta = curr - tDragStart, min = sourceInfo.source_start, max = sourceInfo.source_end;
+      const hasCut = cutStart !== null && cutEnd !== null && cutEnd > cutStart;
+      if (timelineDrag === 'left') {
+        let s = Math.max(min, Math.min(tStartOut - 1, tStartIn + delta));
+        if (hasCut && s > cutStart - .2) s = cutStart - .2;
+        const dur = hasCut ? (cutStart - s) + (tStartOut - cutEnd) : (tStartOut - s);
+        if (dur > 60) s = hasCut ? (cutStart - (60 - (tStartOut - cutEnd))) : tStartOut - 60;
+        setTrim(s, tStartOut, true, cutStart, cutEnd);
+      } else if (timelineDrag === 'right') {
+        let ed = Math.min(max, Math.max(tStartIn + 1, tStartOut + delta));
+        if (hasCut && ed < cutEnd + .2) ed = cutEnd + .2;
+        const dur = hasCut ? (cutStart - tStartIn) + (ed - cutEnd) : (ed - tStartIn);
+        if (dur > 60) ed = hasCut ? (cutEnd + (60 - (cutStart - tStartIn))) : tStartIn + 60;
+        setTrim(tStartIn, ed, false, cutStart, cutEnd); seekTo(Math.max(tStartIn, ed - .05));
+      } else if (timelineDrag === 'move') {
+        const dur = tStartOut - tStartIn; let s = tStartIn + delta;
+        if (s < min) s = min; if (s + dur > max) s = max - dur;
+        let cs = cutStart, ce = cutEnd;
+        if (hasCut) { const cDur = tStartCutOut - tStartCutIn; cs = s + (tStartCutIn - tStartIn); ce = cs + cDur; }
+        setTrim(s, s + dur, true, cs, ce);
+      } else if (timelineDrag === 'cut-left') {
+        if (!hasCut) return;
+        let cs = Math.max(trimStart + .2, Math.min(tStartCutOut - .2, tStartCutIn + delta));
+        setTrim(trimStart, trimEnd, false, cs, tStartCutOut); seekTo(cs);
+      } else if (timelineDrag === 'cut-right') {
+        if (!hasCut) return;
+        let ce = Math.min(trimEnd - .2, Math.max(tStartCutIn + .2, tStartCutOut + delta));
+        setTrim(trimStart, trimEnd, false, tStartCutIn, ce); seekTo(ce);
+      } else if (timelineDrag === 'cut-move') {
+        if (!hasCut) return;
+        const cDur = tStartCutOut - tStartCutIn; let cs = tStartCutIn + delta;
+        if (cs < trimStart + .2) cs = trimStart + .2;
+        if (cs + cDur > trimEnd - .2) cs = trimEnd - .2 - cDur;
+        setTrim(trimStart, trimEnd, false, cs, cs + cDur); seekTo(cs);
+      } else if (timelineDrag === 'seek') {
+        video.pause(); seekTo(curr);
+      }
+    };
+    track.onpointerup = track.onpointercancel = e => {
+      if (track.hasPointerCapture(e.pointerId)) track.releasePointerCapture(e.pointerId);
+      timelineDrag = null; $('timeline-selection').classList.remove('dragging'); $('timeline-cut-zone').classList.remove('dragging');
+    };
+
+    // Transport and step controls
+    $('nudge-back-1s').onclick = () => { if (!sourceInfo) return; video.pause(); seekTo(Math.max(sourceInfo.source_start, position() - 1)); };
+    $('nudge-back-frame').onclick = () => { if (!sourceInfo) return; video.pause(); seekTo(Math.max(sourceInfo.source_start, position() - .05)); };
+    $('nudge-fwd-frame').onclick = () => { if (!sourceInfo) return; video.pause(); seekTo(Math.min(sourceInfo.source_end, position() + .05)); };
+    $('nudge-fwd-1s').onclick = () => { if (!sourceInfo) return; video.pause(); seekTo(Math.min(sourceInfo.source_end, position() + 1)); };
+
+    $('trim-in').oninput = e => { const start = Math.min(Number(e.target.value), sourceInfo.source_end - 1), end = Math.min(sourceInfo.source_end, Math.max(start + 1, Math.min(trimEnd, start + 60))); setTrim(start, end); };
+    $('trim-out').oninput = e => { const end = Math.max(Number(e.target.value), sourceInfo.source_start + 1), start = Math.max(sourceInfo.source_start, Math.min(end - 1, Math.max(trimStart, end - 60))); setTrim(start, end); seekTo(Math.max(start, end - .05)); };
+
+    for (const id of ['edit-start', 'edit-end']) $(id).oninput = () => { const a = parseTime($('edit-start').value), b = parseTime($('edit-end').value); const error = rangeError(a, b, sourceInfo.source_start, sourceInfo.source_end, cutStart, cutEnd); $('trim-error').textContent = error; $('rerender').disabled = !!error || saving || video.readyState < 1; if (!error) { setTrim(a, b, id === 'edit-start'); } };
+    for (const id of ['edit-cut-start', 'edit-cut-end']) { const el = $(id); if (el) el.oninput = () => { const cs = parseTime($('edit-cut-start').value), ce = parseTime($('edit-cut-end').value); const err = rangeError(trimStart, trimEnd, sourceInfo.source_start, sourceInfo.source_end, cs, ce); $('trim-error').textContent = err; $('rerender').disabled = !!err || saving || video.readyState < 1; if (!err) { cutStart = cs; cutEnd = ce; drawTrim(); } }; }
+
+    $('toggle-cut').onclick = () => {
+      if (!sourceInfo) return;
+      if (cutStart !== null && cutEnd !== null) { cutStart = null; cutEnd = null; drawTrim(); return; }
+      const dur = trimEnd - trimStart;
+      if (dur < 2) { $('trim-error').textContent = 'Durasi klip minimal 2 detik untuk potong tengah.'; return; }
+      const mid = (trimStart + trimEnd) / 2, cSpan = Math.min(dur * 0.3, 5);
+      cutStart = Math.round((mid - cSpan / 2) * 100) / 100;
+      cutEnd = Math.round((mid + cSpan / 2) * 100) / 100;
+      drawTrim(); seekTo(cutStart);
+    };
+    if ($('remove-cut')) $('remove-cut').onclick = () => { cutStart = null; cutEnd = null; drawTrim(); };
+    if ($('set-cut-in')) $('set-cut-in').onclick = () => { const p = position(); if (p > trimStart + .2 && (cutEnd === null || p < cutEnd - .2)) { cutStart = Math.round(p * 1000) / 1000; drawTrim(); } };
+    if ($('set-cut-out')) $('set-cut-out').onclick = () => { const p = position(); if (p < trimEnd - .2 && (cutStart === null || p > cutStart + .2)) { cutEnd = Math.round(p * 1000) / 1000; drawTrim(); } };
+
+    $('set-in').onclick = () => setTrim(Math.round(position() * 1000) / 1000, trimEnd);
+    $('set-out').onclick = () => setTrim(trimStart, Math.round(position() * 1000) / 1000, false);
+    $('reset-trim').onclick = () => setTrim(sourceInfo.start, sourceInfo.end, true, null, null);
+
+    $('play-preview').onclick = async () => {
+      if (!video.paused) { video.pause(); return; }
+      const pos = position(), hasCut = cutStart !== null && cutEnd !== null && cutEnd > cutStart;
+      if (pos < trimStart || pos >= trimEnd - .04) seekTo(trimStart);
+      else if (hasCut && pos >= cutStart && pos < cutEnd) seekTo(cutEnd);
+      try { await video.play(); } catch { $('edit-error').textContent = 'Preview tidak dapat diputar. Periksa format video sumber.'; }
+    };
+    $('mute-preview').onclick = () => { video.muted = !video.muted; $('mute-preview').textContent = video.muted ? 'Suara mati' : 'Suara aktif'; $('mute-preview').setAttribute('aria-pressed', String(video.muted)); };
+    video.onplay = () => { $('play-preview').textContent = 'Ⅱ Jeda'; };
+    video.onpause = () => { $('play-preview').textContent = '▶ Putar'; };
+    video.ontimeupdate = () => {
+      if (sourceInfo && !video.paused) {
+        const pos = position(), hasCut = cutStart !== null && cutEnd !== null && cutEnd > cutStart;
+        if (hasCut && pos >= cutStart && pos < cutEnd) seekTo(cutEnd);
+        if (pos >= trimEnd) { video.pause(); seekTo(trimEnd); }
+      }
+      updatePlayhead();
+    };
+    video.onloadedmetadata = () => { if (!sourceInfo) return; fitMonitor(); seekTo(trimStart); $('play-preview').disabled = false; $('mute-preview').disabled = false; drawTrim(); $('source-loading').hidden = true; };
+    video.onerror = () => { if (!$('editor').open || !sourceInfo) return; $('edit-error').textContent = 'Video sumber tidak bisa dimuat.'; $('rerender').disabled = true; $('play-preview').disabled = true; $('source-loading').hidden = true; };
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', e => {
+      if (!$('editor').open || !sourceInfo) return;
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
+      if (e.code === 'Space') { e.preventDefault(); $('play-preview').click(); }
+      else if (e.key === '[') { e.preventDefault(); $('set-in').click(); }
+      else if (e.key === ']') { e.preventDefault(); $('set-out').click(); }
+      else if (e.key === '{') { e.preventDefault(); if ($('set-cut-in')) $('set-cut-in').click(); }
+      else if (e.key === '}') { e.preventDefault(); if ($('set-cut-out')) $('set-cut-out').click(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); video.pause(); seekTo(Math.max(sourceInfo.source_start, position() - (e.shiftKey ? 1 : .05))); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); video.pause(); seekTo(Math.min(sourceInfo.source_end, position() + (e.shiftKey ? 1 : .05))); }
+    });
+
+    async function openEditor(job, i) {
+      document.querySelectorAll('.card video').forEach(v => v.pause());
+      const session = { job, i };
+      current = session; sourceInfo = null; dirty = false; saving = false;
+      video.pause(); video.removeAttribute('src'); video.load(); dragMode = null; startPt = null;
+
+      const c = job.clips[i];
+      $('editor-context').textContent = 'KLIP ' + String(i + 1).padStart(2, '0') + ' / ' + (job.title || 'Video');
+      $('editor-title').textContent = c.title || 'Timeline Editor';
+
+      const filmstrip = $('timeline-filmstrip');
+      if (filmstrip) filmstrip.style.backgroundImage = `url('/api/jobs/${job.id}/clips/${i}/filmstrip')`;
+      const waveform = $('timeline-waveform');
+      if (waveform) waveform.style.backgroundImage = `url('/api/jobs/${job.id}/clips/${i}/waveform')`;
+      const clipName = $('clip-track-filename');
+      if (clipName) clipName.textContent = (c.source_file ? c.source_file.split('/').pop() : (c.title ? c.title.slice(0, 24) : 'clip.mp4'));
+
+      for (const key of ['title', 'hook', 'narration', 'creator']) $('edit-' + key).value = c[key] || '';
+      $('no-face').checked = !c.face_box || c.layout_mode === 'no_face';
+      initialAiCrop = [...(c.face_box || [0, .65, .28, .32])];
+      updateCropBox(...initialAiCrop);
+      setLayout(c.layout_mode || ($('no-face').checked ? 'no_face' : 'split'));
+      syncFace();
+      $('edit-lang').value = c.lang || job.lang || 'id';
+      $('zoom-at').value = c.zoom_at || 0;
+      $('zoom-at').max = c.duration || 60;
+      $('edit-captions').value = JSON.stringify(c.captions || [], null, 2);
+      $('edit-error').textContent = '';
+      $('trim-error').textContent = '';
+      $('source-loading').hidden = false;
+      $('source-loading').textContent = 'Memuat video sumber…';
+      $('source-bounds').textContent = '';
+      $('rerender').disabled = true;
+
+      for (const id of ['play-preview', 'mute-preview', 'nudge-back-1s', 'nudge-back-frame', 'nudge-fwd-frame', 'nudge-fwd-1s', 'trim-in', 'trim-out', 'edit-start', 'edit-end', 'set-in', 'set-out', 'reset-trim', 'toggle-cut']) {
+        if ($(id)) $(id).disabled = true;
+      }
+      $('editor').showModal();
+
+      try {
+        const info = await request(`/api/jobs/${job.id}/clips/${i}/source`);
+        if (current !== session || !$('editor').open) return;
+        sourceInfo = info; trimStart = info.start; trimEnd = info.end;
+        cutStart = info.cut_start != null ? info.cut_start : null;
+        cutEnd = info.cut_end != null ? info.cut_end : null;
+
+        for (const id of ['trim-in', 'trim-out']) { $(id).min = info.source_start; $(id).max = info.source_end; $(id).disabled = false; }
+        for (const id of ['play-preview', 'mute-preview', 'nudge-back-1s', 'nudge-back-frame', 'nudge-fwd-frame', 'nudge-fwd-1s', 'edit-start', 'edit-end', 'set-in', 'set-out', 'reset-trim', 'toggle-cut']) {
+          if ($(id)) $(id).disabled = false;
+        }
+        $('ruler-start').textContent = stamp(info.source_start);
+        $('ruler-mid').textContent = stamp((info.source_start + info.source_end) / 2);
+        $('ruler-end').textContent = stamp(info.source_end);
+        $('source-bounds').textContent = `Sumber: ${timecode(info.source_start)} – ${timecode(info.source_end)}.`;
+        $('zoom-at').max = Math.min(60, info.end - info.start);
+        drawTrim();
+        video.src = media(job, info.source_file);
+        video.load();
+      } catch (err) {
+        if (current !== session) return;
+        $('edit-error').textContent = err.message;
+        $('source-loading').textContent = 'Sumber tidak tersedia. Tutup editor lalu coba lagi.';
+      }
+    }
+
+    function closeEditor() {
+      if (saving) return;
+      if (dirty && !confirm('Tutup editor dan buang perubahan?')) return;
+      $('editor').close();
+    }
+    $('close-editor').onclick = closeEditor;
+    $('cancel-editor').onclick = closeEditor;
+    $('editor').addEventListener('cancel', e => { e.preventDefault(); closeEditor(); });
+    $('editor').addEventListener('close', () => { video.pause(); current = null; sourceInfo = null; video.removeAttribute('src'); video.load(); dirty = false; });
+    $('edit-form').addEventListener('input', () => { dirty = true; });
+
+    $('edit-form').onsubmit = async e => {
+      e.preventDefault();
+      $('edit-error').textContent = '';
+      if (!sourceInfo || saving) return;
+      try {
+        const start = parseTime($('edit-start').value), end = parseTime($('edit-end').value);
+        const hasCut = cutStart !== null && cutEnd !== null && cutEnd > cutStart;
+        const cutS = hasCut ? cutStart : null, cutE = hasCut ? cutEnd : null;
+        const error = rangeError(start, end, sourceInfo.source_start, sourceInfo.source_end, cutS, cutE);
+        if (error) throw Error(error);
+
+        const raw = JSON.parse($('edit-captions').value);
+        if (!Array.isArray(raw) || raw.length > 120 || raw.some(c => !c || typeof c.text !== 'string' || !c.text.length || c.text.length > 180 || !Number.isFinite(c.start) || !Number.isFinite(c.end) || c.start < 0 || c.end <= c.start || c.end > sourceInfo.end - sourceInfo.start + .05)) {
+          throw Error('Subtitle tidak valid.');
+        }
+        const oldZoom = Number($('zoom-at').value);
+        if (!Number.isFinite(oldZoom) || oldZoom < 0 || oldZoom > sourceInfo.end - sourceInfo.start) {
+          throw Error('Waktu zoom melewati rentang klip.');
+        }
+        const effectiveDur = hasCut ? (cutS - start) + (end - cutE) : (end - start);
+        const payload = {
+          start, end, cut_start: cutS, cut_end: cutE,
+          face_box: $('no-face').checked || layoutMode() === 'no_face' ? null : ['x', 'y', 'w', 'h'].map(k => Number($('crop-' + k).value)),
+          zoom_at: Math.min(Math.max(0, oldZoom + sourceInfo.start - start), Math.max(0, effectiveDur - .1)),
+          captions: retimeCaptions(raw, sourceInfo.start, start, end, cutS, cutE),
+          layout_mode: layoutMode(),
+          lang: $('edit-lang').value
+        };
+        for (const key of ['title', 'hook', 'narration', 'creator']) payload[key] = $('edit-' + key).value;
+
+        saving = true; video.pause();
+        $('rerender').disabled = true; $('rerender').textContent = 'Merender…';
+        $('close-editor').disabled = true; $('cancel-editor').disabled = true;
+        notify('Sedang Merender Klip', `Klip "${current?.job?.clips[current?.i]?.title || 'klip'}" sedang dirender ulang...`, '⚙️');
+        await request(`/api/jobs/${current.job.id}/clips/${current.i}/render`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        dirty = false; $('editor').close(); await refresh();
+      } catch (err) {
+        $('edit-error').textContent = err.message;
+      } finally {
+        saving = false;
+        $('rerender').disabled = !sourceInfo; $('rerender').textContent = 'Simpan & Render ↗';
+        $('close-editor').disabled = false; $('cancel-editor').disabled = false;
+      }
+    };
+
+    window.addEventListener('beforeunload', e => { if (dirty && $('editor').open) { e.preventDefault(); e.returnValue = ''; } });
+    $('refresh').onclick = refresh;
+    refresh();
+  </script>
 </body>
+
 </html>
