@@ -93,6 +93,26 @@ class Checks(unittest.TestCase):
             self.assertEqual(res_wave.status_code,200)
             self.assertEqual(res_wave.headers['content-type'],'image/png')
 
+            # Test PATCH job title
+            res_patch = self.client.patch('/api/jobs/testjob', headers=self.headers, json={'title': 'Updated Title'})
+            self.assertEqual(res_patch.status_code, 200)
+            self.assertEqual(res_patch.json()['title'], 'Updated Title')
+
+            # Test POST add new clip
+            res_add_clip = self.client.post('/api/jobs/testjob/clips', headers=self.headers, json={'title': 'Custom New Clip', 'start': 5.0, 'end': 20.0})
+            self.assertEqual(res_add_clip.status_code, 200)
+            self.assertEqual(len(res_add_clip.json()['job']['clips']), 2)
+
+            # Test DELETE clip
+            res_del_clip = self.client.delete('/api/jobs/testjob/clips/1', headers=self.headers)
+            self.assertEqual(res_del_clip.status_code, 200)
+            self.assertEqual(len(res_del_clip.json()['job']['clips']), 1)
+
+            # Test DELETE job
+            res_del_job = self.client.delete('/api/jobs/testjob', headers=self.headers)
+            self.assertEqual(res_del_job.status_code, 200)
+            self.assertNotIn('testjob', app.JOBS)
+
     def test_upload_and_missing_key(self):
         with patch.object(app,'KEY',''):
             self.assertEqual(self.client.post('/api/jobs',headers=self.headers,data={'url':'https://youtu.be/7mjhCbFi9Wk','consent':'yes'}).status_code,400)

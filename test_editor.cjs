@@ -52,5 +52,8 @@ assert.ok(html.includes('id="timeline-waveform"'), 'Timeline waveform must exist
 assert.ok(html.includes('id="clip-track-filename"'), 'Clip track filename badge must exist');
 assert.ok(html.includes('id="clip-track-duration"'), 'Clip track duration badge must exist');
 assert.ok(html.includes('function notify('), 'notify function must exist');
+assert.ok(html.includes('id="btn-open-settings"'), 'Navbar settings button must exist');
+assert.ok(html.includes('id="settings-dialog"'), 'Settings dialog must exist');
+assert.ok(html.includes('position:sticky;top:64px'), 'Sidebar must be sticky');
 
 console.log('Editor timing checks and UI elements passed');

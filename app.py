@@ -47,7 +47,10 @@ async def local_only(request: Request, call_next):
     if request.method not in {'GET', 'HEAD'}:
         length = request.headers.get('content-length', '')
         if not length.isdigit():
-            return JSONResponse({'detail': 'Content-Length diperlukan.'}, status_code=411)
+            if request.method == 'DELETE':
+                length = '0'
+            else:
+                return JSONResponse({'detail': 'Content-Length diperlukan.'}, status_code=411)
         limit = MAX_VIDEO + 6*1024*1024 if request.url.path == '/api/jobs' else 1024*1024
         if int(length) > limit:
             return JSONResponse({'detail': 'Request terlalu besar.'}, status_code=413)
@@ -207,6 +210,20 @@ class EditClip(BaseModel):
         elif self.cut_start is not None:
             raise ValueError('start dan end harus ada jika cut_start ditentukan.')
         return self
+
+
+class UpdateJob(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    title: str | None = None
+    creator: str | None = None
+
+
+class NewClip(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    title: str = 'Klip Baru'
+    start: float | None = None
+    end: float | None = None
+    copy_from: int | None = None
 
 
 def save_job(job):
@@ -454,6 +471,40 @@ def jobs():
     with STATE_LOCK: return copy.deepcopy(list(reversed(list(JOBS.values()))))
 
 
+@app.patch('/api/jobs/{ident}')
+def update_job(ident: str, body: UpdateJob):
+    with STATE_LOCK:
+        job = JOBS.get(ident)
+        if not job:
+            raise HTTPException(404, 'Proyek tidak ditemukan.')
+        if body.title is not None and body.title.strip():
+            job['title'] = body.title.strip()[:200]
+        if body.creator is not None:
+            job['creator'] = body.creator.strip()[:70]
+        save_job(job)
+        return copy.deepcopy(job)
+
+
+@app.delete('/api/jobs/{ident}')
+def delete_job(ident: str):
+    with STATE_LOCK:
+        job = JOBS.get(ident)
+        if not job:
+            raise HTTPException(404, 'Proyek tidak ditemukan.')
+        if job.get('stage') in ACTIVE:
+            job['stage'] = 'interrupted'
+            try:
+                BUSY.release()
+            except RuntimeError:
+                pass
+        JOBS.pop(ident, None)
+    
+    folder = DATA / ident
+    if folder.exists():
+        shutil.rmtree(folder, ignore_errors=True)
+    return {'ok': True, 'id': ident}
+
+
 async def store_upload(file, target, maximum):
     size=0
     with target.open('xb') as out:
@@ -643,6 +694,70 @@ def edit_clip(ident: str,index: int,body: EditClip):
     if not BUSY.acquire(blocking=False): raise HTTPException(409,'Proses lain masih berjalan.')
     POOL.submit(rerender,job,index,body)
     return {'accepted':True}
+
+
+@app.post('/api/jobs/{ident}/clips')
+def create_clip(ident: str, body: NewClip):
+    with STATE_LOCK:
+        job = JOBS.get(ident)
+        if not job:
+            raise HTTPException(404, 'Proyek tidak ditemukan.')
+        clips = job.setdefault('clips', [])
+        folder = DATA / ident
+        
+        if body.copy_from is not None and 0 <= body.copy_from < len(clips):
+            base = copy.deepcopy(clips[body.copy_from])
+            base['title'] = body.title or f"{base.get('title','Klip')} (Salinan)"
+            clips.append(base)
+            save_job(job)
+            return {'ok': True, 'index': len(clips) - 1, 'job': copy.deepcopy(job)}
+        
+        source_file = 'source.mp4' if (folder / 'source.mp4').is_file() else (clips[0].get('source_file') if clips else None)
+        if not source_file:
+            raise HTTPException(400, 'Video sumber tidak tersedia.')
+        
+        s = float(body.start if body.start is not None else (clips[0].get('start', 0.0) if clips else 0.0))
+        e = float(body.end if body.end is not None else (s + 30.0))
+        new_clip = {
+            'title': body.title.strip()[:70] or f'Klip {len(clips)+1}',
+            'start': round(s, 2),
+            'end': round(e, 2),
+            'duration': round(e - s, 2),
+            'source_file': source_file,
+            'status': 'queued',
+            'priority': 'medium',
+            'layout_mode': 'split',
+            'captions': [],
+            'hook': body.title.strip()[:70] or f'Klip {len(clips)+1}',
+            'narration': '',
+            'creator': job.get('creator', '')
+        }
+        clips.append(new_clip)
+        save_job(job)
+        return {'ok': True, 'index': len(clips) - 1, 'job': copy.deepcopy(job)}
+
+
+@app.delete('/api/jobs/{ident}/clips/{index}')
+def delete_clip(ident: str, index: int):
+    with STATE_LOCK:
+        job = JOBS.get(ident)
+        if not job or not 0 <= index < len(job.get('clips', [])):
+            raise HTTPException(404, 'Klip tidak ditemukan.')
+        if job.get('stage') in ACTIVE and job.get('stage') != 'partial':
+            raise HTTPException(409, 'Tidak dapat menghapus klip saat proyek sedang aktif diproses.')
+        
+        folder = DATA / ident
+        clip_folder = folder / f'clip-{index}'
+        if clip_folder.exists():
+            shutil.rmtree(clip_folder, ignore_errors=True)
+        
+        job['clips'].pop(index)
+        try:
+            archive(job)
+        except Exception:
+            pass
+        save_job(job)
+        return {'ok': True, 'job': copy.deepcopy(job)}
 
 
 @app.get('/media/{ident}/{filename:path}')
