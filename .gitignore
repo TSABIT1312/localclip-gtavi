@@ -38,6 +38,8 @@ Thumbs.db
 .impeccable/
 .vscode/
 .idea/
+.claude/
+.playwright-mcp/
 *.swp
 *.swo
 *~

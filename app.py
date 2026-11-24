@@ -176,6 +176,8 @@ class EditClip(BaseModel):
     captions: list[Caption] = Field(max_length=120)
     layout_mode: str = Field(default='split', pattern='^(split|contained|no_face)$')
     lang: str = Field(default='id', pattern='^(id|en)$')
+    start: float | None = None
+    end: float | None = None
 
     @model_validator(mode='after')
     def crop(self):
@@ -185,6 +187,11 @@ class EditClip(BaseModel):
             x,y,w,h = self.face_box
             if min(x,y)<0 or min(w,h)<.03 or x+w>1.00001 or y+h>1.00001:
                 raise ValueError('Crop harus berada di dalam gambar (0–1).')
+        if self.start is not None and self.end is not None:
+            if self.end <= self.start:
+                raise ValueError('Waktu akhir harus lebih besar dari waktu mulai.')
+            if self.end - self.start > 60.5:
+                raise ValueError('Durasi potongan maksimal 60 detik.')
         return self
 
 
@@ -473,14 +480,53 @@ async def create_job(url: str=Form(''), count: int=Form(5), creator: str=Form(''
 def rerender(job,index,body):
     from render import render_clip
     clip=job['clips'][index]; folder=DATA/job['id']
+    work=folder/f'clip-{index}'; work.mkdir(exist_ok=True)
+    source_target=work/'source.mp4'
     try:
-        clip.update(body.model_dump(),status='rendering',error=None); update(job,stage='rendering')
+        if body.start is not None and body.end is not None:
+            new_start=round(body.start,2); new_end=round(body.end,2)
+            if job.get('upload') and (folder/'source.mp4').is_file():
+                run(['ffmpeg','-y','-v','error','-ss',str(new_start),'-i',folder/'source.mp4','-t',str(new_end-new_start),'-c:v','libx264','-preset','fast','-c:a','aac',source_target])
+                clip['start']=new_start; clip['end']=new_end; clip['duration']=probe(source_target)
+                clip['source_file']=str(source_target.relative_to(folder))
+            elif job.get('url') and (abs(new_start-clip.get('start',0))>0.05 or abs(new_end-clip.get('end',0))>0.05):
+                try:
+                    run([sys.executable,'-I','-m','yt_dlp','--ignore-config','--no-playlist','-f','bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080]','--merge-output-format','mp4','--download-sections',f'*{new_start}-{new_end}','--force-keyframes-at-cuts','-o',source_target,youtube_url(job['url'])])
+                    clip['start']=new_start; clip['end']=new_end; clip['duration']=probe(source_target)
+                    clip['source_file']=str(source_target.relative_to(folder))
+                except Exception:
+                    old_source=folder/clip['source_file']
+                    if old_source.is_file() and new_start>=clip.get('start',0):
+                        rel_s=max(0,new_start-clip.get('start',0)); dur=new_end-new_start
+                        tmp_cut=work/'source_trimmed.mp4'
+                        run(['ffmpeg','-y','-v','error','-ss',str(rel_s),'-i',old_source,'-t',str(dur),'-c:v','libx264','-preset','fast','-c:a','aac',tmp_cut])
+                        tmp_cut.replace(source_target)
+                        clip['start']=new_start; clip['end']=new_end; clip['duration']=probe(source_target)
+                        clip['source_file']=str(source_target.relative_to(folder))
+        clip.update(body.model_dump(exclude={'start','end'}),status='rendering',error=None); update(job,stage='rendering')
         output=render_clip(folder/clip['source_file'],folder/f'clip-{index}',clip,body.creator)
         clip.update(file=str(Path(output).relative_to(folder)),status='done')
         archive(job); update(job,stage='done' if all(c['status']=='done' for c in job['clips']) else 'partial')
     except Exception as exc:
         clip.update(status='error',error=safe_error(exc)); update(job,stage='partial')
     finally: BUSY.release()
+
+
+@app.get('/api/jobs/{ident}/clips/{index}/source')
+def clip_source(ident: str, index: int):
+    job=JOBS.get(ident)
+    if not job or not 0<=index<len(job['clips']): raise HTTPException(404,'Klip tidak ditemukan.')
+    clip=job['clips'][index]; folder=DATA/ident
+    if job.get('upload') and (folder/'source.mp4').is_file():
+        source_file='source.mp4'; source_start=0.0
+        source_end=float(job.get('duration') or probe(folder/'source.mp4'))
+    else:
+        source_file=clip.get('source_file')
+        if not source_file or not (folder/source_file).is_file():
+            raise HTTPException(400,'File video sumber klip ini tidak tersedia di disk.')
+        source_start=float(clip.get('start',0.0))
+        source_end=float(clip.get('end',source_start+clip.get('duration',60.0)))
+    return {'start':float(clip.get('start',source_start)),'end':float(clip.get('end',source_end)),'source_start':source_start,'source_end':source_end,'source_file':source_file}
 
 
 @app.post('/api/jobs/{ident}/clips/{index}/render')
@@ -502,6 +548,7 @@ def media(ident: str,filename: str):
     if not job: raise HTTPException(404)
     allowed={job.get('zip')}
     for c in job['clips']: allowed.update(c.get(k) for k in ('file','poster','source_file'))
+    if (DATA/ident/'source.mp4').is_file(): allowed.add('source.mp4')
     if filename not in allowed: raise HTTPException(404)
     root=(DATA/ident).resolve(); path=(root/filename).resolve()
     if not path.is_relative_to(root) or not path.is_file(): raise HTTPException(404)

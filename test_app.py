@@ -35,9 +35,31 @@ class Checks(unittest.TestCase):
         body=dict(title='A',hook='B',narration='C',creator='Kai',zoom_at=1,captions=[dict(start=0,end=2,text='Hi')])
         self.assertEqual(app.EditClip(**body,face_box=[0,.4,.2,.2],lang='id').creator,'Kai')
         self.assertEqual(app.EditClip(**body,face_box=[0,.4,.2,.2],lang='en').lang,'en')
+        self.assertEqual(app.EditClip(**body,start=10.0,end=25.0).start,10.0)
+        with self.assertRaises(ValueError): app.EditClip(**body,start=25.0,end=10.0)
+        with self.assertRaises(ValueError): app.EditClip(**body,start=0.0,end=70.0)
         for box in [[.9,0,.2,.2],[0,0,-.1,.2],[0,0,float('nan'),.2]]:
             with self.assertRaises(ValueError): app.EditClip(**body,face_box=box)
         with self.assertRaises(ValueError): app.Caption(start=3,end=2,text='wrong')
+
+    def test_clip_source_and_render_endpoint(self):
+        with tempfile.TemporaryDirectory() as tmp, patch.object(app,'DATA',Path(tmp)), patch.object(app,'JOBS',{}):
+            folder=Path(tmp)/'testjob'; folder.mkdir()
+            (folder/'source.mp4').write_bytes(b'fake')
+            clip_dir=folder/'clip-0'; clip_dir.mkdir()
+            (clip_dir/'source.mp4').write_bytes(b'fakeclip')
+            app.JOBS['testjob']={
+                'id':'testjob','title':'Test','upload':True,'duration':120.0,'creator':'Tester',
+                'clips':[{'title':'C1','start':10.0,'end':25.0,'duration':15.0,'source_file':'clip-0/source.mp4'}]
+            }
+            res=self.client.get('/api/jobs/testjob/clips/0/source')
+            self.assertEqual(res.status_code,200)
+            data=res.json()
+            self.assertEqual(data['start'],10.0)
+            self.assertEqual(data['end'],25.0)
+            self.assertEqual(data['source_start'],0.0)
+            self.assertEqual(data['source_end'],120.0)
+            self.assertEqual(data['source_file'],'source.mp4')
 
     def test_upload_and_missing_key(self):
         with patch.object(app,'KEY',''):
