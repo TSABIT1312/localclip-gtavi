@@ -82,6 +82,17 @@ class Checks(unittest.TestCase):
             self.assertEqual(res2.json()['cut_start'],14.0)
             self.assertEqual(res2.json()['cut_end'],18.0)
 
+            # Test pre-generated filmstrip & waveform serving
+            (clip_dir/'filmstrip.jpg').write_bytes(b'fakejpeg')
+            res_film=self.client.get('/api/jobs/testjob/clips/0/filmstrip')
+            self.assertEqual(res_film.status_code,200)
+            self.assertEqual(res_film.headers['content-type'],'image/jpeg')
+
+            (clip_dir/'waveform.png').write_bytes(b'fakepng')
+            res_wave=self.client.get('/api/jobs/testjob/clips/0/waveform')
+            self.assertEqual(res_wave.status_code,200)
+            self.assertEqual(res_wave.headers['content-type'],'image/png')
+
     def test_upload_and_missing_key(self):
         with patch.object(app,'KEY',''):
             self.assertEqual(self.client.post('/api/jobs',headers=self.headers,data={'url':'https://youtu.be/7mjhCbFi9Wk','consent':'yes'}).status_code,400)

@@ -45,4 +45,12 @@ assert.deepEqual(withCut, [{start: 1, end: 3, text: 'First'}, {start: 3, end: 5,
 const discarded = JSON.parse(JSON.stringify(ctx.retimeCaptions([{start: 4, end: 5, text: 'Inside'}], 100, 100, 110, 103, 106)));
 assert.deepEqual(discarded, []);
 
-console.log('Editor timing checks passed');
+// UI structure tests for filmstrip, waveform, badge, and toast
+assert.ok(html.includes('id="toast-container"'), 'Toast container must exist');
+assert.ok(html.includes('id="timeline-filmstrip"'), 'Timeline filmstrip must exist');
+assert.ok(html.includes('id="timeline-waveform"'), 'Timeline waveform must exist');
+assert.ok(html.includes('id="clip-track-filename"'), 'Clip track filename badge must exist');
+assert.ok(html.includes('id="clip-track-duration"'), 'Clip track duration badge must exist');
+assert.ok(html.includes('function notify('), 'notify function must exist');
+
+console.log('Editor timing checks and UI elements passed');

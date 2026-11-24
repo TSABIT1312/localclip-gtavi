@@ -567,6 +567,65 @@ def clip_source(ident: str, index: int):
     return {'start':float(clip.get('start',source_start)),'end':float(clip.get('end',source_end)),'cut_start':clip.get('cut_start'),'cut_end':clip.get('cut_end'),'source_start':source_start,'source_end':source_end,'source_file':source_file}
 
 
+@app.get('/api/jobs/{ident}/clips/{index}/filmstrip')
+def clip_filmstrip(ident: str, index: int):
+    job = JOBS.get(ident)
+    if not job or not 0 <= index < len(job['clips']):
+        raise HTTPException(404, 'Klip tidak ditemukan.')
+    folder = DATA / ident
+    info = clip_source(ident, index)
+    source_file = folder / info['source_file']
+    if not source_file.is_file():
+        raise HTTPException(404, 'File sumber tidak ditemukan.')
+    
+    work = folder / f'clip-{index}'
+    work.mkdir(exist_ok=True)
+    filmstrip_file = work / 'filmstrip.jpg'
+    
+    if not filmstrip_file.is_file():
+        s = info['source_start']
+        dur = max(1.0, info['source_end'] - s)
+        try:
+            run(['ffmpeg', '-y', '-v', 'error', '-ss', str(s), '-t', str(dur), '-i', source_file,
+                 '-vf', f'fps=10/{dur},scale=128:72,tile=10x1', '-frames:v', '1', filmstrip_file], timeout=30)
+        except Exception:
+            pass
+    
+    if not filmstrip_file.is_file():
+        raise HTTPException(404, 'Filmstrip tidak tersedia.')
+    return FileResponse(filmstrip_file, media_type='image/jpeg')
+
+
+@app.get('/api/jobs/{ident}/clips/{index}/waveform')
+def clip_waveform(ident: str, index: int):
+    job = JOBS.get(ident)
+    if not job or not 0 <= index < len(job['clips']):
+        raise HTTPException(404, 'Klip tidak ditemukan.')
+    folder = DATA / ident
+    info = clip_source(ident, index)
+    source_file = folder / info['source_file']
+    if not source_file.is_file():
+        raise HTTPException(404, 'File sumber tidak ditemukan.')
+    
+    work = folder / f'clip-{index}'
+    work.mkdir(exist_ok=True)
+    wave_file = work / 'waveform.png'
+    
+    if not wave_file.is_file():
+        s = info['source_start']
+        dur = max(1.0, info['source_end'] - s)
+        try:
+            run(['ffmpeg', '-y', '-v', 'error', '-ss', str(s), '-t', str(dur), '-i', source_file,
+                 '-filter_complex', 'aformat=channel_layouts=mono,showwavespic=s=800x28:colors=white',
+                 '-frames:v', '1', wave_file], timeout=30)
+        except Exception:
+            pass
+    
+    if not wave_file.is_file():
+        raise HTTPException(404, 'Waveform tidak tersedia.')
+    return FileResponse(wave_file, media_type='image/png')
+
+
 @app.post('/api/jobs/{ident}/clips/{index}/render')
 def edit_clip(ident: str,index: int,body: EditClip):
     job=JOBS.get(ident)
