@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Clip Local — Video Editor Studio</title>
+  <title>Clip Local - Video Editor Studio</title>
   <link rel="icon"
     href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ffffff'/%3E%3Cpath d='M12 9v14l12-7z' fill='%23000000'/%3E%3C/svg%3E">
   <style>
@@ -1503,11 +1503,11 @@
 
 <header class="topbar">
   <div class="row">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">▷</span>CLIP <span>/ STUDIO</span></div>
+    <div class="brand">CLIP <span>/ STUDIO</span></div>
     <span class="eyebrow topbar-note">Local Video Editor</span>
   </div>
   <div class="row">
-    <span class="status" id="connection" role="status">Menghubungkan…</span>
+    <span class="status" id="connection" role="status">Menghubungkan...</span>
     <button type="button" class="quiet btn-sm" id="btn-open-settings" aria-label="Pengaturan AI">
       <span class="key-dot" id="key-indicator"></span>
       <span>Pengaturan AI</span>
@@ -1524,11 +1524,11 @@
     </div>
     <form id="new-job">
         <label for="url">Link YouTube</label>
-        <input id="url" type="url" placeholder="https://youtube.com/watch?v=…">
+        <input id="url" type="url" placeholder="https://youtube.com/watch?v=...">
 
         <details class="upload-option">
           <summary>Upload File Lokal</summary>
-          <label for="video">File MP4 · Maks 1 GB</label>
+          <label for="video">File MP4 | Maks 1 GB</label>
           <input id="video" type="file" accept="video/*">
           <small class="muted" style="display:block;margin-top:4px">Upload membutuhkan subtitle SRT.</small>
         </details>
@@ -1581,7 +1581,7 @@
       </div>
       <div class="library-bar spread">
         <strong>Total Klip <span id="clip-count" class="muted">/ 0</span></strong>
-        <span class="eyebrow">Studio Timeline · Trimmer · Export</span>
+        <span class="eyebrow">Studio Timeline | Trimmer | Export</span>
       </div>
       <div id="message" class="error" role="alert"></div>
       <div id="jobs"></div>
@@ -1589,15 +1589,15 @@
   </main>
 
   <footer class="footer">
-    <span>CLIP / STUDIO · Pemrosesan Lokal</span>
-    <span>720 × 1280 · Non-Destructive</span>
+    <span>CLIP / STUDIO | Pemrosesan Lokal</span>
+    <span>720 x 1280 | Non-Destructive</span>
   </footer>
 
   <!-- Settings Dialog (Navbar Top Right) -->
   <dialog id="settings-dialog" class="settings-dialog" aria-labelledby="settings-heading">
     <div class="settings-head spread">
       <h3 id="settings-heading" style="margin:0;font-size:15px">Pengaturan AI Model</h3>
-      <button type="button" class="quiet btn-sm" id="btn-close-settings" aria-label="Tutup">✕</button>
+      <button type="button" class="quiet btn-sm" id="btn-close-settings" aria-label="Tutup">Tutup</button>
     </div>
     <form id="settings-form" class="settings-form">
       <label for="api-key">API Key (Anthropic / 9Router)</label>
@@ -1627,7 +1627,7 @@
       </div>
       <div class="row">
         <span class="status">Preview Sumber</span>
-        <button type="button" class="quiet btn-sm" id="close-editor" aria-label="Tutup editor">Tutup ✕</button>
+        <button type="button" class="quiet btn-sm" id="close-editor" aria-label="Tutup editor">Tutup</button>
       </div>
     </div>
     <form id="edit-form">
@@ -1674,11 +1674,11 @@
               <div class="capcut-time-display">
                 <output id="playhead-time" class="time">00:00.000</output>
                 <span class="time-sep">/</span>
-                <output id="trim-duration" class="duration-badge">— detik</output>
+                <output id="trim-duration" class="duration-badge">- detik</output>
               </div>
             </div>
 
-            <p id="source-loading" class="loading-note" role="status">Memuat video sumber…</p>
+            <p id="source-loading" class="loading-note" role="status">Memuat video sumber...</p>
             <div class="timeline-ruler">
               <span id="ruler-start">00:00</span>
               <span id="ruler-mid">00:00</span>
@@ -1824,7 +1824,7 @@
         <small id="save-note" class="muted">Sumber video asli tidak akan tertimpa.</small>
         <div class="row">
           <button type="button" class="quiet" id="cancel-editor">Batal</button>
-          <button class="primary" id="rerender" type="submit" disabled>Simpan & Render ↗</button>
+          <button class="primary" id="rerender" type="submit" disabled>Simpan & Render</button>
         </div>
       </div>
     </form>
@@ -1860,7 +1860,7 @@
         if ((cutStart - start) < 0.2 || (end - cutEnd) < 0.2) return 'Bagian sebelum dan sesudah potongan tengah minimal 0.2 detik.';
         effective = (cutStart - start) + (end - cutEnd);
       }
-      if (effective < 1 - 1e-6 || effective > 60 + 1e-6) return 'Durasi bersih klip harus 1–60 detik.';
+      if (effective < 1 - 1e-6 || effective > 60 + 1e-6) return 'Durasi bersih klip harus 1-60 detik.';
       return '';
     }
     function retimeCaptions(captions, oldStart, start, end, cutStart, cutEnd) {
@@ -1932,7 +1932,7 @@
       if (!container) return;
       const t = el('div', undefined, 'toast'), cnt = el('div', undefined, 'toast-content');
       cnt.append(el('div', title, 'toast-title'), el('div', messageText, 'toast-body'));
-      const btn = el('button', '×', 'toast-close');
+      const btn = el('button', 'X', 'toast-close');
       btn.setAttribute('aria-label', 'Tutup');
       btn.onclick = () => { t.classList.add('hide'); setTimeout(() => t.remove(), 220); };
       t.append(cnt, btn);
@@ -1958,7 +1958,7 @@
       if (!jobs.length) {
         const empty = el('div', undefined, 'empty');
         empty.append(
-          el('div', '▷', 'empty-reel'),
+          el('div', '[Reel]', 'empty-reel'),
           el('h3', 'Belum Ada Proyek'),
           el('p', 'Masukkan link YouTube atau upload video di sidebar untuk mulai membuat klip short.')
         );
@@ -2051,7 +2051,7 @@
           const body = el('div', undefined, 'card-body');
           const info = el('div');
           info.append(
-            el('span', `${stamp(clip.start)} — ${stamp(clip.end)}`, 'time muted'),
+            el('span', `${stamp(clip.start)} - ${stamp(clip.end)}`, 'time muted'),
             el('h4', clip.title || `Klip ${i + 1}`),
             el('small', stages[clip.status] || clip.status, 'muted')
           );
@@ -2508,7 +2508,7 @@
       $('edit-error').textContent = '';
       $('trim-error').textContent = '';
       $('source-loading').hidden = false;
-      $('source-loading').textContent = 'Memuat video sumber…';
+      $('source-loading').textContent = 'Memuat video sumber...';
       $('source-bounds').textContent = '';
       $('rerender').disabled = true;
 
@@ -2531,7 +2531,7 @@
         $('ruler-start').textContent = stamp(info.source_start);
         $('ruler-mid').textContent = stamp((info.source_start + info.source_end) / 2);
         $('ruler-end').textContent = stamp(info.source_end);
-        $('source-bounds').textContent = `Sumber: ${timecode(info.source_start)} – ${timecode(info.source_end)}.`;
+        $('source-bounds').textContent = `Sumber: ${timecode(info.source_start)} - ${timecode(info.source_end)}.`;
         $('zoom-at').max = Math.min(60, info.end - info.start);
         drawTrim();
         video.src = media(job, info.source_file);
@@ -2585,7 +2585,7 @@
         for (const key of ['title', 'hook', 'narration', 'creator']) payload[key] = $('edit-' + key).value;
 
         saving = true; video.pause();
-        $('rerender').disabled = true; $('rerender').textContent = 'Merender…';
+        $('rerender').disabled = true; $('rerender').textContent = 'Merender...';
         $('close-editor').disabled = true; $('cancel-editor').disabled = true;
         notify('Sedang Merender Klip', `Klip "${current?.job?.clips[current?.i]?.title || 'klip'}" sedang dirender ulang...`);
         await request(`/api/jobs/${current.job.id}/clips/${current.i}/render`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -2594,7 +2594,7 @@
         $('edit-error').textContent = err.message;
       } finally {
         saving = false;
-        $('rerender').disabled = !sourceInfo; $('rerender').textContent = 'Simpan & Render ↗';
+        $('rerender').disabled = !sourceInfo; $('rerender').textContent = 'Simpan & Render';
         $('close-editor').disabled = false; $('cancel-editor').disabled = false;
       }
     };
