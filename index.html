@@ -199,7 +199,7 @@ dialog::backdrop{background:rgba(0,0,0,0.88);backdrop-filter:blur(6px)}
   <div class="row">
     <span class="status" id="connection" role="status">Menghubungkan…</span>
     <button type="button" class="quiet btn-sm" id="btn-open-settings" aria-label="Pengaturan AI">
-      <span class="key-dot" id="key-dot"></span>
+      <span class="key-dot" id="key-indicator"></span>
       <span>⚙️ Pengaturan AI</span>
     </button>
   </div>
@@ -765,7 +765,8 @@ async function refresh() {
     const s = await request('/api/status');
     token = s.token;
     $('connection').textContent = s.ai_ready ? 'Siap' : 'API Key Kosong';
-    $('key-indicator').className = 'key-dot ' + (s.ai_ready ? 'ready' : '');
+    const ki = $('key-indicator');
+    if (ki) ki.className = 'key-dot ' + (s.ai_ready ? 'ready' : '');
     $('key-status').textContent = s.ai_ready ? '✓ Kunci aktif' : '⚠ Perlu diisi';
     if (document.activeElement !== $('model')) $('model').value = s.model;
     if (document.activeElement !== $('base-url')) $('base-url').value = s.base_url === 'https://api.anthropic.com' ? '' : s.base_url || '';

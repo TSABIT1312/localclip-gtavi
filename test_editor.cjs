@@ -54,6 +54,14 @@ assert.ok(html.includes('id="clip-track-duration"'), 'Clip track duration badge 
 assert.ok(html.includes('function notify('), 'notify function must exist');
 assert.ok(html.includes('id="btn-open-settings"'), 'Navbar settings button must exist');
 assert.ok(html.includes('id="settings-dialog"'), 'Settings dialog must exist');
+assert.ok(html.includes('id="key-indicator"'), 'Key indicator must exist');
 assert.ok(html.includes('position:sticky;top:64px'), 'Sidebar must be sticky');
 
-console.log('Editor timing checks and UI elements passed');
+// Automated check: every $('...') in script must exist as an id in HTML
+const htmlIds = new Set([...html.matchAll(/id=["']([^"']+)["']/g)].map(m => m[1]));
+const jsIds = [...html.matchAll(/\$\(['"]([^'"]+)['"]\)/g)].map(m => m[1]);
+for (const id of jsIds) {
+  assert.ok(htmlIds.has(id), `Element id="${id}" referenced in script does not exist in HTML!`);
+}
+
+console.log(`Editor timing checks and all ${jsIds.length} UI element references passed`);
