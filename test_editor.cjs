@@ -25,4 +25,24 @@ assert.ok(ctx.rangeError(0, 61, 0, 100));
 assert.ok(ctx.rangeError(4, 3, 0, 100));
 assert.ok(ctx.rangeError(NaN, 5, 0, 100));
 assert.ok(ctx.rangeError(0, 4, 1, 10));
+
+// Middle-cut range validation tests
+assert.equal(ctx.rangeError(0, 30, 0, 60, 10, 15), '');
+assert.ok(ctx.rangeError(0, 30, 0, 60, 15, 10)); // cutEnd <= cutStart
+assert.ok(ctx.rangeError(0, 30, 0, 60, -1, 10)); // cutStart < start
+assert.ok(ctx.rangeError(0, 30, 0, 60, 10, 31)); // cutEnd > end
+assert.ok(ctx.rangeError(0, 30, 0, 60, 0.1, 10)); // cutStart - start < 0.2
+
+// Captions with middle-cut:
+// original: [1-4] and [5-8] in source (rel 100) -> abs [101-104] and [105-108]
+// If start=100, end=110, cutStart=103, cutEnd=106:
+// First caption [101-104] straddles cutStart: clipped to [101-103] -> rel [1-3]
+// Second caption [105-108] straddles cutEnd: clipped to [106-108], shifted by cutDur(3) -> rel [3-5]
+const withCut = JSON.parse(JSON.stringify(ctx.retimeCaptions(original, 100, 100, 110, 103, 106)));
+assert.deepEqual(withCut, [{start: 1, end: 3, text: 'First'}, {start: 3, end: 5, text: 'Next'}]);
+
+// Discard caption entirely inside cut zone
+const discarded = JSON.parse(JSON.stringify(ctx.retimeCaptions([{start: 4, end: 5, text: 'Inside'}], 100, 100, 110, 103, 106)));
+assert.deepEqual(discarded, []);
+
 console.log('Editor timing checks passed');

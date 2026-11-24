@@ -178,6 +178,8 @@ class EditClip(BaseModel):
     lang: str = Field(default='id', pattern='^(id|en)$')
     start: float | None = None
     end: float | None = None
+    cut_start: float | None = None
+    cut_end: float | None = None
 
     @model_validator(mode='after')
     def crop(self):
@@ -187,11 +189,23 @@ class EditClip(BaseModel):
             x,y,w,h = self.face_box
             if min(x,y)<0 or min(w,h)<.03 or x+w>1.00001 or y+h>1.00001:
                 raise ValueError('Crop harus berada di dalam gambar (0–1).')
+        if (self.cut_start is None) != (self.cut_end is None):
+            raise ValueError('cut_start dan cut_end harus ditentukan bersamaan.')
         if self.start is not None and self.end is not None:
             if self.end <= self.start:
                 raise ValueError('Waktu akhir harus lebih besar dari waktu mulai.')
-            if self.end - self.start > 60.5:
+            if self.cut_start is not None and self.cut_end is not None:
+                if not (self.start < self.cut_start < self.cut_end < self.end):
+                    raise ValueError('Bagian yang dipotong tengah harus berada di dalam rentang video (start < cut_start < cut_end < end).')
+                if (self.cut_start - self.start) < 0.2 or (self.end - self.cut_end) < 0.2:
+                    raise ValueError('Bagian sebelum dan sesudah potongan tengah minimal 0.2 detik.')
+                effective_duration = (self.cut_start - self.start) + (self.end - self.cut_end)
+            else:
+                effective_duration = self.end - self.start
+            if effective_duration > 60.5:
                 raise ValueError('Durasi potongan maksimal 60 detik.')
+        elif self.cut_start is not None:
+            raise ValueError('start dan end harus ada jika cut_start ditentukan.')
         return self
 
 
@@ -485,25 +499,49 @@ def rerender(job,index,body):
     try:
         if body.start is not None and body.end is not None:
             new_start=round(body.start,2); new_end=round(body.end,2)
+            has_cut = body.cut_start is not None and body.cut_end is not None
+            c_start = round(body.cut_start, 2) if has_cut else None
+            c_end = round(body.cut_end, 2) if has_cut else None
+
             if job.get('upload') and (folder/'source.mp4').is_file():
-                run(['ffmpeg','-y','-v','error','-ss',str(new_start),'-i',folder/'source.mp4','-t',str(new_end-new_start),'-c:v','libx264','-preset','fast','-c:a','aac',source_target])
-                clip['start']=new_start; clip['end']=new_end; clip['duration']=probe(source_target)
+                src_input = folder/'source.mp4'
+                if has_cut:
+                    p1 = work/'part1.mp4'; p2 = work/'part2.mp4'
+                    run(['ffmpeg','-y','-v','error','-ss',str(new_start),'-i',src_input,'-t',str(c_start-new_start),'-c:v','libx264','-preset','fast','-c:a','aac',p1])
+                    run(['ffmpeg','-y','-v','error','-ss',str(c_end),'-i',src_input,'-t',str(new_end-c_end),'-c:v','libx264','-preset','fast','-c:a','aac',p2])
+                    run(['ffmpeg','-y','-v','error','-i',p1,'-i',p2,'-filter_complex','[0:v][0:a][1:v][1:a]concat=n=2:v=1:a=1[v][a]','-map','[v]','-map','[a]','-c:v','libx264','-preset','fast','-c:a','aac',source_target])
+                    p1.unlink(missing_ok=True); p2.unlink(missing_ok=True)
+                else:
+                    run(['ffmpeg','-y','-v','error','-ss',str(new_start),'-i',src_input,'-t',str(new_end-new_start),'-c:v','libx264','-preset','fast','-c:a','aac',source_target])
+                clip['start']=new_start; clip['end']=new_end; clip['cut_start']=c_start; clip['cut_end']=c_end
+                clip['duration']=probe(source_target)
                 clip['source_file']=str(source_target.relative_to(folder))
-            elif job.get('url') and (abs(new_start-clip.get('start',0))>0.05 or abs(new_end-clip.get('end',0))>0.05):
+            elif job.get('url') and (abs(new_start-clip.get('start',0))>0.05 or abs(new_end-clip.get('end',0))>0.05 or has_cut):
                 try:
-                    run([sys.executable,'-I','-m','yt_dlp','--ignore-config','--no-playlist','-f','bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080]','--merge-output-format','mp4','--download-sections',f'*{new_start}-{new_end}','--force-keyframes-at-cuts','-o',source_target,youtube_url(job['url'])])
-                    clip['start']=new_start; clip['end']=new_end; clip['duration']=probe(source_target)
-                    clip['source_file']=str(source_target.relative_to(folder))
+                    raw_dl = work/'source_raw.mp4'
+                    run([sys.executable,'-I','-m','yt_dlp','--ignore-config','--no-playlist','-f','bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080]','--merge-output-format','mp4','--download-sections',f'*{new_start}-{new_end}','--force-keyframes-at-cuts','-o',raw_dl,youtube_url(job['url'])])
+                    src_input = raw_dl
+                    offset = new_start
                 except Exception:
-                    old_source=folder/clip['source_file']
-                    if old_source.is_file() and new_start>=clip.get('start',0):
-                        rel_s=max(0,new_start-clip.get('start',0)); dur=new_end-new_start
-                        tmp_cut=work/'source_trimmed.mp4'
-                        run(['ffmpeg','-y','-v','error','-ss',str(rel_s),'-i',old_source,'-t',str(dur),'-c:v','libx264','-preset','fast','-c:a','aac',tmp_cut])
-                        tmp_cut.replace(source_target)
-                        clip['start']=new_start; clip['end']=new_end; clip['duration']=probe(source_target)
-                        clip['source_file']=str(source_target.relative_to(folder))
-        clip.update(body.model_dump(exclude={'start','end'}),status='rendering',error=None); update(job,stage='rendering')
+                    src_input = folder/clip['source_file']
+                    offset = clip.get('start', 0)
+
+                if has_cut:
+                    p1 = work/'part1.mp4'; p2 = work/'part2.mp4'
+                    s1 = max(0, new_start - offset); d1 = c_start - new_start
+                    s2 = max(0, c_end - offset); d2 = new_end - c_end
+                    run(['ffmpeg','-y','-v','error','-ss',str(s1),'-i',src_input,'-t',str(d1),'-c:v','libx264','-preset','fast','-c:a','aac',p1])
+                    run(['ffmpeg','-y','-v','error','-ss',str(s2),'-i',src_input,'-t',str(d2),'-c:v','libx264','-preset','fast','-c:a','aac',p2])
+                    run(['ffmpeg','-y','-v','error','-i',p1,'-i',p2,'-filter_complex','[0:v][0:a][1:v][1:a]concat=n=2:v=1:a=1[v][a]','-map','[v]','-map','[a]','-c:v','libx264','-preset','fast','-c:a','aac',source_target])
+                    p1.unlink(missing_ok=True); p2.unlink(missing_ok=True)
+                else:
+                    s = max(0, new_start - offset); d = new_end - new_start
+                    run(['ffmpeg','-y','-v','error','-ss',str(s),'-i',src_input,'-t',str(d),'-c:v','libx264','-preset','fast','-c:a','aac',source_target])
+                if (work/'source_raw.mp4').is_file(): (work/'source_raw.mp4').unlink(missing_ok=True)
+                clip['start']=new_start; clip['end']=new_end; clip['cut_start']=c_start; clip['cut_end']=c_end
+                clip['duration']=probe(source_target)
+                clip['source_file']=str(source_target.relative_to(folder))
+        clip.update(body.model_dump(exclude={'start','end','cut_start','cut_end'}),status='rendering',error=None); update(job,stage='rendering')
         output=render_clip(folder/clip['source_file'],folder/f'clip-{index}',clip,body.creator)
         clip.update(file=str(Path(output).relative_to(folder)),status='done')
         archive(job); update(job,stage='done' if all(c['status']=='done' for c in job['clips']) else 'partial')
@@ -526,7 +564,7 @@ def clip_source(ident: str, index: int):
             raise HTTPException(400,'File video sumber klip ini tidak tersedia di disk.')
         source_start=float(clip.get('start',0.0))
         source_end=float(clip.get('end',source_start+clip.get('duration',60.0)))
-    return {'start':float(clip.get('start',source_start)),'end':float(clip.get('end',source_end)),'source_start':source_start,'source_end':source_end,'source_file':source_file}
+    return {'start':float(clip.get('start',source_start)),'end':float(clip.get('end',source_end)),'cut_start':clip.get('cut_start'),'cut_end':clip.get('cut_end'),'source_start':source_start,'source_end':source_end,'source_file':source_file}
 
 
 @app.post('/api/jobs/{ident}/clips/{index}/render')
@@ -535,8 +573,14 @@ def edit_clip(ident: str,index: int,body: EditClip):
     if not job or not 0<=index<len(job['clips']): raise HTTPException(404,'Klip tidak ditemukan.')
     clip=job['clips'][index]
     if not clip.get('source_file'): raise HTTPException(400,'Sumber lokal tidak tersedia untuk klip arsip ini.')
-    length=clip['duration']
-    if body.zoom_at>length or any(c.end>length+.05 for c in body.captions): raise HTTPException(400,'Timestamp melewati durasi klip.')
+    if body.start is not None and body.end is not None:
+        if body.cut_start is not None and body.cut_end is not None:
+            length=(body.cut_start-body.start)+(body.end-body.cut_end)
+        else:
+            length=body.end-body.start
+    else:
+        length=clip['duration']
+    if body.zoom_at>length+0.05 or any(c.end>length+0.1 for c in body.captions): raise HTTPException(400,'Timestamp melewati durasi klip.')
     if not BUSY.acquire(blocking=False): raise HTTPException(409,'Proses lain masih berjalan.')
     POOL.submit(rerender,job,index,body)
     return {'accepted':True}

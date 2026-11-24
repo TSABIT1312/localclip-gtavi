@@ -36,6 +36,18 @@ class Checks(unittest.TestCase):
         self.assertEqual(app.EditClip(**body,face_box=[0,.4,.2,.2],lang='id').creator,'Kai')
         self.assertEqual(app.EditClip(**body,face_box=[0,.4,.2,.2],lang='en').lang,'en')
         self.assertEqual(app.EditClip(**body,start=10.0,end=25.0).start,10.0)
+        # Middle cut validation
+        clip_with_cut = app.EditClip(**body,start=10.0,end=25.0,cut_start=15.0,cut_end=20.0)
+        self.assertEqual(clip_with_cut.cut_start, 15.0)
+        self.assertEqual(clip_with_cut.cut_end, 20.0)
+        # cut_start without cut_end or vice-versa
+        with self.assertRaises(ValueError): app.EditClip(**body,start=10.0,end=25.0,cut_start=15.0)
+        with self.assertRaises(ValueError): app.EditClip(**body,start=10.0,end=25.0,cut_end=20.0)
+        # cut bounds outside start/end or inverted
+        with self.assertRaises(ValueError): app.EditClip(**body,start=10.0,end=25.0,cut_start=20.0,cut_end=15.0)
+        with self.assertRaises(ValueError): app.EditClip(**body,start=10.0,end=25.0,cut_start=9.0,cut_end=15.0)
+        with self.assertRaises(ValueError): app.EditClip(**body,start=10.0,end=25.0,cut_start=15.0,cut_end=26.0)
+        with self.assertRaises(ValueError): app.EditClip(**body,start=10.0,end=25.0,cut_start=10.1,cut_end=20.0) # < 0.2s before cut
         with self.assertRaises(ValueError): app.EditClip(**body,start=25.0,end=10.0)
         with self.assertRaises(ValueError): app.EditClip(**body,start=0.0,end=70.0)
         for box in [[.9,0,.2,.2],[0,0,-.1,.2],[0,0,float('nan'),.2]]:
@@ -60,6 +72,15 @@ class Checks(unittest.TestCase):
             self.assertEqual(data['source_start'],0.0)
             self.assertEqual(data['source_end'],120.0)
             self.assertEqual(data['source_file'],'source.mp4')
+            self.assertIsNone(data.get('cut_start'))
+            self.assertIsNone(data.get('cut_end'))
+
+            app.JOBS['testjob']['clips'][0]['cut_start'] = 14.0
+            app.JOBS['testjob']['clips'][0]['cut_end'] = 18.0
+            res2=self.client.get('/api/jobs/testjob/clips/0/source')
+            self.assertEqual(res2.status_code,200)
+            self.assertEqual(res2.json()['cut_start'],14.0)
+            self.assertEqual(res2.json()['cut_end'],18.0)
 
     def test_upload_and_missing_key(self):
         with patch.object(app,'KEY',''):
