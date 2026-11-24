@@ -1510,7 +1510,7 @@
     <span class="status" id="connection" role="status">Menghubungkan…</span>
     <button type="button" class="quiet btn-sm" id="btn-open-settings" aria-label="Pengaturan AI">
       <span class="key-dot" id="key-indicator"></span>
-      <span>⚙️ Pengaturan AI</span>
+      <span>Pengaturan AI</span>
     </button>
   </div>
 </header>
@@ -1566,7 +1566,7 @@
           </label>
         </div>
 
-        <button class="primary wide" id="generate" type="submit">⚡ Buat Klip Short</button>
+        <button class="primary wide" id="generate" type="submit">Buat Klip Short</button>
       </form>
     </aside>
 
@@ -1577,7 +1577,7 @@
           <h1 id="workspace-title">Daftar Proyek</h1>
           <p>Potong, edit layout, dan render video short Anda.</p>
         </div>
-        <button class="quiet btn-sm" id="refresh" aria-label="Refresh daftar klip">↻ Refresh</button>
+        <button class="quiet btn-sm" id="refresh" aria-label="Refresh daftar klip">Refresh</button>
       </div>
       <div class="library-bar spread">
         <strong>Total Klip <span id="clip-count" class="muted">/ 0</span></strong>
@@ -1653,15 +1653,12 @@
           <div class="timeline-panel" style="margin-top:12px">
             <div class="capcut-toolbar">
               <div class="capcut-toolgroup">
-                <button type="button" class="btn-capcut" id="nudge-back-1s" title="Mundur 1 detik (Shift + ◀)"
-                  disabled>⏪ -1s</button>
-                <button type="button" class="btn-capcut" id="nudge-back-frame" title="Mundur 1 frame (◀)" disabled>◀
-                  -0.05s</button>
-                <button type="button" class="btn-capcut primary" id="play-preview" disabled>▶ Putar</button>
-                <button type="button" class="btn-capcut" id="nudge-fwd-frame" title="Maju 1 frame (▶)" disabled>+0.05s
-                  ▶</button>
-                <button type="button" class="btn-capcut" id="nudge-fwd-1s" title="Maju 1 detik (Shift + ▶)" disabled>+1s
-                  ⏩</button>
+                <button type="button" class="btn-capcut" id="nudge-back-1s" title="Mundur 1 detik (Shift + Kiri)"
+                  disabled>-1s</button>
+                <button type="button" class="btn-capcut" id="nudge-back-frame" title="Mundur 1 frame (Kiri)" disabled>-0.05s</button>
+                <button type="button" class="btn-capcut primary" id="play-preview" disabled>Putar</button>
+                <button type="button" class="btn-capcut" id="nudge-fwd-frame" title="Maju 1 frame (Kanan)" disabled>+0.05s</button>
+                <button type="button" class="btn-capcut" id="nudge-fwd-1s" title="Maju 1 detik (Shift + Kanan)" disabled>+1s</button>
               </div>
               <div class="capcut-toolgroup">
                 <button type="button" class="btn-capcut" id="set-in" title="Potong awal di posisi playhead ([)"
@@ -1669,9 +1666,8 @@
                 <button type="button" class="btn-capcut" id="set-out" title="Potong akhir di posisi playhead (])"
                   disabled>Trim Out ]</button>
                 <button type="button" class="btn-capcut btn-capcut-danger" id="toggle-cut"
-                  title="Potong / buang bagian di tengah video" disabled>✂️ Potong Tengah</button>
-                <button type="button" class="btn-capcut" id="reset-trim" title="Kembalikan durasi awal" disabled>↺
-                  Reset</button>
+                  title="Potong / buang bagian di tengah video" disabled>Potong Tengah</button>
+                <button type="button" class="btn-capcut" id="reset-trim" title="Kembalikan durasi awal" disabled>Reset</button>
                 <button type="button" class="btn-capcut" id="mute-preview" aria-pressed="false" disabled>Suara
                   aktif</button>
               </div>
@@ -1713,7 +1709,7 @@
                 <div class="cut-handle handle-cut-left" data-handle="cut-left"
                   title="Tarik untuk atur batas awal bagian yang dibuang"></div>
                 <div class="cut-body" title="Geser posisi bagian yang dibuang">
-                  <span class="cut-label">✂️ DIBUANG</span>
+                  <span class="cut-label">DIBUANG</span>
                 </div>
                 <div class="cut-handle handle-cut-right" data-handle="cut-right"
                   title="Tarik untuk atur batas akhir bagian yang dibuang"></div>
@@ -1724,7 +1720,7 @@
             </div>
 
             <details style="margin-top:10px">
-              <summary style="font-size:11px;color:var(--muted);cursor:pointer">⚙️ Pengaturan Waktu Presisi & Cut Zone
+              <summary style="font-size:11px;color:var(--muted);cursor:pointer">Pengaturan Waktu Presisi & Cut Zone
               </summary>
               <div class="trim-slider-row"><label for="trim-in">Mulai</label><input id="trim-in" type="range" min="0"
                   max="1" step="0.01" value="0" disabled></div>
@@ -1739,7 +1735,7 @@
               <div id="cut-fields-group" style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)"
                 hidden>
                 <div class="spread" style="margin-bottom:6px">
-                  <strong style="font-size:11px;color:#ffffff">✂️ Bagian Tengah yang Dibuang</strong>
+                  <strong style="font-size:11px;color:#ffffff">Bagian Tengah yang Dibuang</strong>
                   <button type="button" class="btn-capcut" id="remove-cut">Hapus potongan tengah</button>
                 </div>
                 <div class="time-fields">
@@ -1931,15 +1927,15 @@
     }
 
     const prevJobStages = new Map(), prevClipStatus = new Map();
-    function notify(title, messageText, icon = 'ℹ️', duration = 4500) {
+    function notify(title, messageText, duration = 4500) {
       const container = $('toast-container');
       if (!container) return;
-      const t = el('div', undefined, 'toast'), ic = el('span', icon, 'toast-icon'), cnt = el('div', undefined, 'toast-content');
+      const t = el('div', undefined, 'toast'), cnt = el('div', undefined, 'toast-content');
       cnt.append(el('div', title, 'toast-title'), el('div', messageText, 'toast-body'));
       const btn = el('button', '×', 'toast-close');
       btn.setAttribute('aria-label', 'Tutup');
       btn.onclick = () => { t.classList.add('hide'); setTimeout(() => t.remove(), 220); };
-      t.append(ic, cnt, btn);
+      t.append(cnt, btn);
       container.prepend(t);
       if (duration > 0) { setTimeout(() => { if (t.parentElement) { t.classList.add('hide'); setTimeout(() => t.remove(), 220); } }, duration); }
       if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
@@ -1982,14 +1978,14 @@
         // Job CRUD buttons (Rename, Add Clip, Delete Project, Download ZIP)
         const jobActions = el('div', undefined, 'row');
 
-        const renameBtn = el('button', '✎ Ganti Nama', 'quiet btn-sm');
+        const renameBtn = el('button', 'Ganti Nama', 'quiet btn-sm');
         renameBtn.title = 'Ubah nama proyek';
         renameBtn.onclick = async () => {
           const newTitle = prompt('Nama baru proyek:', job.title || '');
           if (newTitle && newTitle.trim()) {
             try {
               await request(`/api/jobs/${job.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: newTitle.trim() }) });
-              notify('Judul Diperbarui', 'Nama proyek berhasil diperbarui.', '✏️');
+              notify('Judul Diperbarui', 'Nama proyek berhasil diperbarui.');
               await refresh();
             } catch (err) { alert(err.message); }
           }
@@ -2000,26 +1996,26 @@
         addClipBtn.onclick = async () => {
           try {
             const res = await request(`/api/jobs/${job.id}/clips`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: `Klip ${(job.clips || []).length + 1}` }) });
-            notify('Klip Ditambahkan', 'Klip baru berhasil dibuat.', '➕');
+            notify('Klip Ditambahkan', 'Klip baru berhasil dibuat.');
             await refresh();
             if (res.index !== undefined) openEditor(res.job, res.index);
           } catch (err) { alert(err.message); }
         };
 
-        const delJobBtn = el('button', '🗑 Hapus', 'btn-danger btn-sm');
+        const delJobBtn = el('button', 'Hapus', 'btn-danger btn-sm');
         delJobBtn.title = 'Hapus proyek dan seluruh klip di dalamnya';
         delJobBtn.onclick = async () => {
           if (confirm(`Hapus proyek "${job.title || 'ini'}" dan seluruh hasil rendernya?`)) {
             try {
               await request(`/api/jobs/${job.id}`, { method: 'DELETE' });
-              notify('Proyek Dihapus', `Proyek "${job.title || ''}" telah dihapus.`, '🗑️');
+              notify('Proyek Dihapus', `Proyek "${job.title || ''}" telah dihapus.`);
               await refresh();
             } catch (err) { alert(err.message); }
           }
         };
 
         jobActions.append(renameBtn, addClipBtn);
-        if (job.zip) jobActions.append(link('↓ ZIP', media(job, job.zip), true));
+        if (job.zip) jobActions.append(link('ZIP', media(job, job.zip), true));
         jobActions.append(delJobBtn);
 
         head.append(titleRow, jobActions);
@@ -2070,28 +2066,28 @@
             actions.append(editBtn);
           }
 
-          const dupBtn = el('button', '⎘ Duplikat', 'quiet btn-sm');
+          const dupBtn = el('button', 'Duplikat', 'quiet btn-sm');
           dupBtn.title = 'Duplikat klip ini untuk variasi trim';
           dupBtn.onclick = async () => {
             try {
               await request(`/api/jobs/${job.id}/clips`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ copy_from: i, title: `${clip.title || 'Klip'} (Salinan)` }) });
-              notify('Klip Diduplikasi', 'Salinan klip siap diedit.', '⎘');
+              notify('Klip Diduplikasi', 'Salinan klip siap diedit.');
               await refresh();
             } catch (err) { alert(err.message); }
           };
           actions.append(dupBtn);
 
           if (clip.file) {
-            actions.append(link('↓ MP4', media(job, clip.file), true));
+            actions.append(link('Download MP4', media(job, clip.file), true));
           }
 
-          const delClipBtn = el('button', '✕', 'btn-danger btn-sm');
+          const delClipBtn = el('button', 'Hapus', 'btn-danger btn-sm');
           delClipBtn.title = 'Hapus klip ini';
           delClipBtn.onclick = async () => {
             if (confirm(`Hapus "${clip.title || 'klip ini'}"?`)) {
               try {
                 await request(`/api/jobs/${job.id}/clips/${i}`, { method: 'DELETE' });
-                notify('Klip Dihapus', 'Klip telah dihapus dari daftar.', '🗑️');
+                notify('Klip Dihapus', 'Klip telah dihapus dari daftar.');
                 await refresh();
               } catch (err) { alert(err.message); }
             }
@@ -2117,7 +2113,7 @@
         $('connection').textContent = s.ai_ready ? 'Siap' : 'API Key Kosong';
         const ki = $('key-indicator');
         if (ki) ki.className = 'key-dot ' + (s.ai_ready ? 'ready' : '');
-        $('key-status').textContent = s.ai_ready ? '✓ Kunci aktif' : '⚠ Perlu diisi';
+        $('key-status').textContent = s.ai_ready ? 'Kunci aktif' : 'Perlu diisi';
         if (document.activeElement !== $('model')) $('model').value = s.model;
         if (document.activeElement !== $('base-url')) $('base-url').value = s.base_url === 'https://api.anthropic.com' ? '' : s.base_url || '';
 
@@ -2129,11 +2125,11 @@
           const prevStage = prevJobStages.get(j.id);
           if (prevStage && prevStage !== j.stage) {
             const name = j.title || 'Video';
-            if (j.stage === 'fetching') notify('Mengunduh Video', `Mengambil sumber video "${name}"...`, '📥');
-            else if (j.stage === 'analyzing') notify('Menganalisis Momen', `Mendeteksi momen terbaik dalam "${name}"...`, '🔍');
-            else if (j.stage === 'rendering') notify('Sedang Merender Video', `Merender klip untuk "${name}"...`, '⚙️');
-            else if (j.stage === 'done') notify('Render Selesai!', `Semua klip untuk "${name}" selesai dirender.`, '✅');
-            else if (j.stage === 'error') notify('Proses Gagal', j.error || `Gagal memproses "${name}".`, '⚠️');
+            if (j.stage === 'fetching') notify('Mengunduh Video', `Mengambil sumber video "${name}"...`);
+            else if (j.stage === 'analyzing') notify('Menganalisis Momen', `Mendeteksi momen terbaik dalam "${name}"...`);
+            else if (j.stage === 'rendering') notify('Sedang Merender Video', `Merender klip untuk "${name}"...`);
+            else if (j.stage === 'done') notify('Render Selesai!', `Semua klip untuk "${name}" selesai dirender.`);
+            else if (j.stage === 'error') notify('Proses Gagal', j.error || `Gagal memproses "${name}".`);
           }
           prevJobStages.set(j.id, j.stage);
 
@@ -2141,7 +2137,7 @@
             const cKey = `${j.id}:${idx}`;
             const prevCStat = prevClipStatus.get(cKey);
             if (prevCStat && prevCStat !== c.status && c.status === 'done') {
-              notify('Klip Siap!', `Klip "${c.title || `Klip ${idx + 1}`}" selesai dirender.`, '✨');
+              notify('Klip Siap!', `Klip "${c.title || `Klip ${idx + 1}`}" selesai dirender.`);
             }
             prevClipStatus.set(cKey, c.status);
           });
@@ -2172,7 +2168,7 @@
         $('api-key').value = '';
         message('');
         $('settings-dialog').close();
-        notify('Pengaturan Disimpan', 'Konfigurasi AI berhasil diperbarui.', '⚙️');
+        notify('Pengaturan Disimpan', 'Konfigurasi AI berhasil diperbarui.');
         await refresh();
       } catch (err) {
         message(err.message);
@@ -2198,7 +2194,7 @@
       if (srt) form.set('captions', srt);
 
       $('generate').disabled = true;
-      notify('Dalam Antrean', 'Video ditambahkan ke antrean dan akan segera diproses.', '⏳');
+      notify('Dalam Antrean', 'Video ditambahkan ke antrean dan akan segera diproses.');
       try {
         await request('/api/jobs', { method: 'POST', body: form });
         $('url').value = '';
@@ -2310,7 +2306,7 @@
 
       if (hasCut) {
         cutZone.hidden = false; if (cutGroup) cutGroup.hidden = false;
-        toggleBtn.classList.add('active'); toggleBtn.textContent = '✕ Batal Potong';
+        toggleBtn.classList.add('active'); toggleBtn.textContent = 'Batal Potong';
         cutZone.style.left = (cutStart - min) / span * 100 + '%';
         cutZone.style.width = (cutEnd - cutStart) / span * 100 + '%';
         $('edit-cut-start').value = timecode(cutStart);
@@ -2320,7 +2316,7 @@
         if (trackDur) trackDur.textContent = timecode(effDur);
       } else {
         cutZone.hidden = true; if (cutGroup) cutGroup.hidden = true;
-        toggleBtn.classList.remove('active'); toggleBtn.textContent = '✂️ Potong Tengah';
+        toggleBtn.classList.remove('active'); toggleBtn.textContent = 'Potong Tengah';
         const effDur = trimEnd - trimStart;
         $('trim-duration').textContent = effDur.toFixed(2) + ' detik';
         if (trackDur) trackDur.textContent = timecode(effDur);
@@ -2456,8 +2452,8 @@
       try { await video.play(); } catch { $('edit-error').textContent = 'Preview tidak dapat diputar. Periksa format video sumber.'; }
     };
     $('mute-preview').onclick = () => { video.muted = !video.muted; $('mute-preview').textContent = video.muted ? 'Suara mati' : 'Suara aktif'; $('mute-preview').setAttribute('aria-pressed', String(video.muted)); };
-    video.onplay = () => { $('play-preview').textContent = 'Ⅱ Jeda'; };
-    video.onpause = () => { $('play-preview').textContent = '▶ Putar'; };
+    video.onplay = () => { $('play-preview').textContent = 'Jeda'; };
+    video.onpause = () => { $('play-preview').textContent = 'Putar'; };
     video.ontimeupdate = () => {
       if (sourceInfo && !video.paused) {
         const pos = position(), hasCut = cutStart !== null && cutEnd !== null && cutEnd > cutStart;
@@ -2591,7 +2587,7 @@
         saving = true; video.pause();
         $('rerender').disabled = true; $('rerender').textContent = 'Merender…';
         $('close-editor').disabled = true; $('cancel-editor').disabled = true;
-        notify('Sedang Merender Klip', `Klip "${current?.job?.clips[current?.i]?.title || 'klip'}" sedang dirender ulang...`, '⚙️');
+        notify('Sedang Merender Klip', `Klip "${current?.job?.clips[current?.i]?.title || 'klip'}" sedang dirender ulang...`);
         await request(`/api/jobs/${current.job.id}/clips/${current.i}/render`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
         dirty = false; $('editor').close(); await refresh();
       } catch (err) {
